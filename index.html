@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp" data-buttons="tonal" data-motion>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SwarmKit | TypeScript SDK for agent procurement on NEAR</title>
+  <meta name="description" content="Pool agent demand, clear sealed bids, and settle each buyer’s share on NEAR with one TypeScript SDK.">
+  <meta name="theme-color" content="#0a0d14">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SwarmKit">
+  <meta property="og:description" content="TypeScript infrastructure for agent procurement on NEAR.">
+  <meta property="og:image" content="https://mikemoulder.github.io/swarmkit-site/share.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./assets/system.css">
+  <link rel="stylesheet" href="./assets/motion/motion.css">
+  <link rel="stylesheet" href="./assets/layout/layout.css">
+  <link rel="stylesheet" href="./site.css">
+  <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+  <script type="module" src="./assets/system.js"></script>
+  <script type="module" src="./assets/motion/motion.js"></script>
+</head>
+<body>
+  <!-- Software. Split hero, cornflower palette, sharp edges, tonal buttons, wordmark, dark band and pinned chapters. -->
+  <header class="site-header">
+    <div class="wrap topbar">
+      <a class="skip-link" href="#main">Skip to content</a>
+      <a class="brand" href="./" aria-label="SwarmKit home"><span class="brand-mark" aria-hidden="true">✳</span> SwarmKit</a>
+      <nav aria-label="Main">
+        <a href="./docs/">Docs</a>
+        <a href="./agents/">Agent guide</a>
+        <a href="https://github.com/mikemoulder/swarmkit">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero hero--split" aria-labelledby="hero-title" data-enter>
+      <div class="wrap hero-grid">
+        <div class="hero__text">
+          <p class="eyebrow"><span></span> TYPESCRIPT SDK FOR NEAR</p>
+          <h1 id="hero-title">A market for your agents.</h1>
+          <p class="hero__lead">Pool demand, clear sealed bids, and settle each buyer’s share on NEAR. Start with a deterministic round that runs without credentials.</p>
+          <div class="hero-actions">
+            <a class="action primary" href="./docs/">Read the docs <span aria-hidden="true">↗</span></a>
+            <a class="action" href="https://mikemoulder.github.io/swarmkit-market/">Run the market <span aria-hidden="true">↗</span></a>
+          </div>
+          <code class="package-name">near-swarmkit <span> / </span> Node 22.18+</code>
+        </div>
+        <div class="hero__media market-visual" data-visual>
+          <div class="app-frame">
+            <header class="frame-top"><span><i></i> GPU procurement</span><span>SIMULATION</span></header>
+            <div class="frame-body">
+              <div class="frame-title"><div><small>ROUND 2026</small><p>NVIDIA H100</p></div><span>Cleared</span></div>
+              <div class="frame-metrics">
+                <div><small>Pooled demand</small><strong>90 <em>GPU hours</em></strong></div>
+                <div><small>Clearing price</small><strong>4 <em>credits / hour</em></strong></div>
+              </div>
+              <table>
+                <thead><tr><th scope="col">Seller</th><th scope="col">Price</th><th scope="col">Capacity</th><th scope="col">Outcome</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Seller 01</th><td>2</td><td>89</td><td>Insufficient</td></tr>
+                  <tr class="winner"><th scope="row">Seller 02</th><td>4</td><td>90</td><td>Winner</td></tr>
+                  <tr><th scope="row">Seller 03</th><td>6</td><td>90</td><td>Eligible</td></tr>
+                </tbody>
+              </table>
+              <div class="frame-foot"><span>20 buyers · 5 sellers</span><span>360 simulated credits</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="workflow" class="section workflow" style="--h: 2" data-moment="pinned-chapters" aria-labelledby="workflow-title">
+      <div class="wrap mo-pc__grid">
+        <div class="mo-pc__text">
+          <h2 id="workflow-title">From demand to settlement</h2>
+          <ol class="mo-pc__steps">
+            <li class="mo-pc__step">
+              <h3>Pool demand and seal bids</h3>
+              <p>Each buyer submits a quantity and a spending cap. Sellers commit to their prices and capacity before reveals open.</p>
+              <div class="mo-pc__visual stage-visual" aria-hidden="true"><span>01 / COMMIT</span><b>90 GPU hours</b><div><code>seller-1</code><code>sha256: c8…</code></div><div><code>seller-2</code><code>sha256: b4…</code></div><div><code>seller-3</code><code>sha256: 71…</code></div></div>
+            </li>
+            <li class="mo-pc__step">
+              <h3>Clear the market</h3>
+              <p>Use lowest-price clearing, split demand across sellers, or supply your own allocation rule.</p>
+              <div class="mo-pc__visual stage-visual" aria-hidden="true"><span>02 / CLEAR</span><b>4 credits / hour</b><div><code>Seller 01 · 89 hours</code><code>Rejected</code></div><div><code>Seller 02 · 90 hours</code><code>Winner</code></div></div>
+            </li>
+            <li class="mo-pc__step">
+              <h3>Settle and audit</h3>
+              <p>Turn the allocation into exact payments. Approve buyer spend, resume settlement from a journal, and reconcile finalized receipts.</p>
+              <div class="mo-pc__visual stage-visual" aria-hidden="true"><span>03 / AUDIT</span><b>20 buyer payments</b><div><code>Round transcript</code><code>Replay</code></div><div><code>Per-buyer shares</code><code>Reconcile</code></div></div>
+            </li>
+          </ol>
+        </div>
+        <div class="mo-pc__visuals frame" aria-hidden="true"></div>
+      </div>
+    </section>
+    <section class="section proof" aria-labelledby="proof-title">
+      <div class="wrap">
+        <h2 id="proof-title">From the SDK to NEAR testnet</h2>
+        <div class="proof-grid">
+          <article><strong>20</strong><h3>GPU payments</h3><p>Twenty buyers paid their individual shares. The finalized transfers totaled 0.036 testnet NEAR.</p><a href="https://github.com/mikemoulder/swarmkit#settlement-evidence">Inspect the GPU run ↗</a></article>
+          <article><strong>2</strong><h3>Sellers in a split order</h3><p>One five-hour order cleared across two sellers. The same payment journal resumed and reconciled both transfers.</p><a href="https://github.com/mikemoulder/swarmkit#settlement-evidence">Inspect the split run ↗</a></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap"><span class="brand">SwarmKit</span><nav aria-label="Footer"><a href="./docs/">Docs</a><a href="./agents/">Agent guide</a><a href="./llms.txt">llms.txt</a><a href="https://github.com/mikemoulder/swarmkit">Source ↗</a></nav></div></footer>
+</body>
+</html>

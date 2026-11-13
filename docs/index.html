@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Run your first market | SwarmKit</title>
+  <meta name="description" content="Build a sealed-bid round with two buyers and two sellers. Run it locally with Node 22.18 or newer.">
+  <meta name="theme-color" content="#0a0d14">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/system.css">
+  <link rel="stylesheet" href="../site.css">
+</head>
+<body class="docs-body">
+  <header class="site-header"><div class="wrap topbar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">✳</span> SwarmKit</a>
+    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
+  </div></header>
+  <main id="main" class="wrap docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><a href="../docs/" aria-current="page">Quickstart</a><a href="../reference/">SDK reference</a><a href="../agents/">Agent guide</a></nav>
+    <article class="docs-content"><h1>Run your first market</h1><p>Build a sealed-bid round with two buyers and two sellers. Run it locally with Node 22.18 or newer.</p>
+    <h2>Install the SDK</h2>
+    <p>Run <code>npm ci</code> and <code>npm run pack:sdk</code> in the <a href="https://github.com/mikemoulder/swarmkit">SDK repository</a>. Install the resulting tarball in your Node project. The package name is <code>near-swarmkit</code>.</p>
+    <pre><code>npm install /path/to/near-swarmkit-0.1.0.tgz</code></pre>
+    <h2>Pool inference demand</h2>
+    <p>Save this as <code>market.mjs</code> and run <code>node market.mjs</code>. Use integer strings for quantity and amounts.</p>
+    <pre><code id="quickstart">import { simulateProcurement } from "near-swarmkit";
+
+const { plan } = await simulateProcurement({
+  seed: 42,
+  spec: {
+    id: "inference-credits-01",
+    resource: { label: "Inference credits", unit: "credit", deliveryWindow: "Today" },
+    asset: "demo-credits",
+    demandCloses: 10,
+    commitCloses: 20,
+    revealCloses: 30,
+  },
+  buyers: [
+    { id: "research", demand: () =&gt; ({ quantity: "3", budget: "15" }) },
+    { id: "indexer", demand: () =&gt; ({ quantity: "2", budget: "10" }) },
+  ],
+  sellers: [
+    { id: "fastlane", offer: () =&gt; ({ capacity: "4", unitPrice: "3" }) },
+    { id: "northstar", offer: () =&gt; ({ capacity: "5", unitPrice: "4" }) },
+  ],
+});
+
+console.log(plan.payments.map(({ buyerId, amount }) =&gt; [buyerId, amount]));</code></pre>
+    <p>The first offer is cheaper but covers only four credits. The second seller clears all five. Research owes 12 credits and Indexer owes eight.</p>
+    <h2>Follow a round into settlement</h2>
+    <ol>
+      <li><code>createRound</code> accepts buyer demand and seller commitments and reveals.</li>
+      <li><code>settlementPlanFromTranscript</code> replays the recorded inputs and derives exact buyer payments.</li>
+      <li><code>executeWithSpendingPolicies</code> checks buyer-signed approvals before a settlement transport can send.</li>
+      <li><code>auditSettlement</code> compares receipt claims against an optional read-only verifier.</li>
+    </ol>
+    <p><a href="../reference/">Read the SDK reference</a></p></article>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+</body>
+</html>

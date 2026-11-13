@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDK reference | SwarmKit</title>
+  <meta name="description" content="The public TypeScript interface for procurement, replay, signing, and settlement.">
+  <meta name="theme-color" content="#0a0d14">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/system.css">
+  <link rel="stylesheet" href="../site.css">
+</head>
+<body class="docs-body">
+  <header class="site-header"><div class="wrap topbar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">✳</span> SwarmKit</a>
+    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
+  </div></header>
+  <main id="main" class="wrap docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><a href="../docs/">Quickstart</a><a href="../reference/" aria-current="page">SDK reference</a><a href="../agents/">Agent guide</a></nav>
+    <article class="docs-content"><h1>SDK reference</h1><p>The public TypeScript interface for procurement, replay, signing, and settlement.</p>
+    <h2>Coordinator and allocation</h2>
+    <table class="doc-table">
+      <thead><tr><th scope="col">Export</th><th scope="col">Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>createRound</code></td><td>Configure buyers, sellers, one resource, one asset, three deadlines, and an optional clock and mechanism.</td></tr>
+        <tr><td><code>commitBid</code></td><td>Hash the round ID, seller ID, capacity, price, and a 32-byte salt. Generate a fresh cryptographic salt for live bids.</td></tr>
+        <tr><td><code>lowestPrice</code></td><td>Choose the cheapest seller that can cover the entire pool within all buyer caps. Account ID breaks ties.</td></tr>
+        <tr><td><code>cheapestCapacity</code></td><td>Serve tight budgets first, drawing from lower-priced sellers. All demand must be filled. Charges use each seller’s bid.</td></tr>
+        <tr><td><code>simulateProcurement</code></td><td>Run buyer and seller strategies with a seed. Inspect stage snapshots, the transcript and synthetic payments.</td></tr>
+      </tbody>
+    </table>
+    <p>A custom <code>ProcurementMechanism</code> can select an eligible winner or supply split lines. Pin its implementation to a versioned ID when replaying a round.</p>
+    <h2>Replay and storage</h2>
+    <p><code>round.transcript()</code> returns accepted events, the round specification, and its observation time. <code>replayRound</code> recomputes a snapshot. <code>resumeRound</code> reopens a round with a clock at or after that observation time.</p>
+    <p>Use <code>openStoredRound</code> and <code>submitStoredRoundEvent</code> with a <code>RoundStore</code>. Its compare-and-set operation must be atomic. A transcript proves consistency with its own recorded inputs. Use trusted storage and authenticate participants at your service boundary.</p>
+    <h2>Settlement and NEAR</h2>
+    <table class="doc-table">
+      <thead><tr><th scope="col">Export</th><th scope="col">Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>createSettlementPlan</code></td><td>Derive payment IDs and amounts from a closed snapshot. Split plans use one ID per buyer–seller pair.</td></tr>
+        <tr><td><code>executeSettlement</code></td><td>Authorize, journal signed bytes, inspect the stored hash, and send or reconcile the same transaction.</td></tr>
+        <tr><td><code>executeWithSpendingPolicies</code></td><td>Check buyer Ed25519 approvals against the plan’s asset, sellers, cumulative amounts, scope and expiry.</td></tr>
+        <tr><td><code>planNearSubaccounts</code></td><td>Prepare create, fund, and add-key actions for direct children. The application supplies the parent signer.</td></tr>
+        <tr><td><code>nearTestnetTransport</code></td><td>Settle native testnet NEAR with an application-supplied signer and check the finalized transfer.</td></tr>
+        <tr><td><code>nearIntentsTransport</code></td><td>Settle supported NEP-141 Verifier balances with a buyer NEP-413 signer and relayer signer. Preflight and reconcile finalized execution.</td></tr>
+        <tr><td><code>auditSettlement</code></td><td>Replay a transcript, check receipt IDs and hashes, and compare claimed and observed outcomes.</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Settlement transfers are independent. A round can settle partially. A confirmed transfer requires a separate seller-authorized payment to refund. Keep journal entries private because they contain signed transaction bytes.</p>
+    <p><a href="https://docs.near-intents.org/">Read the NEAR Intents documentation</a></p></article>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+</body>
+</html>
