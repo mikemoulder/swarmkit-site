@@ -158,7 +158,7 @@ for (const [slug, title, description, body] of pages) {
         <div class="nav__item"><a class="nav__link" href="../docs/"${slug==='docs'?' aria-current="page"':''}>Docs</a></div>
         <div class="nav__item"><a class="nav__link" href="../reference/"${slug==='reference'?' aria-current="page"':''}>Reference</a></div>
         <div class="nav__item"><a class="nav__link" href="../agents/"${slug==='agents'?' aria-current="page"':''}>Agents</a></div>
-        <div class="nav__item"><a class="nav__link" href="https://mikemoulder.github.io/swarmkit-market/">Market demo</a></div>
+        <div class="nav__item"><a class="nav__link" href="https://swarmkit-coop.pages.dev/">Market demo</a></div>
       </nav>
       <div class="nav__actions"><a class="btn btn--secondary" href="https://github.com/mikemoulder/swarmkit">View on GitHub</a></div>
     </div>
@@ -192,5 +192,5 @@ for (const [slug, title, description, body] of pages) {
 
 const plain = value => value.replace(/<[^>]*>/g,' ').replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&amp;','&').replace(/[ \t]+/g,' ');
 await writeFile(join(root,'search-index.json'), JSON.stringify(pages.map(([slug,title,description,body]) => ({ slug,title,description,text:plain(body) }))));
-await writeFile(join(root,'llms-full.txt'), pages.map(([slug,title,description,body]) => `# ${title}\nhttps://mikemoulder.github.io/swarmkit-site/${slug}/\n${description}\n${plain(body)}\n`).join('\n'));
-await writeFile(join(root,'llms.txt'), '# SwarmKit\n\nTypeScript SDK for procurement and agent coordination on NEAR. Package: near-swarmkit.\n\n' + pages.map(([slug,title])=>`- [${title}](https://mikemoulder.github.io/swarmkit-site/${slug}/)`).join('\n') + '\n- [Full documentation](https://mikemoulder.github.io/swarmkit-site/llms-full.txt)\n\nUse canonical integer strings. Authenticate actors outside the SDK. Keep checkpoints and signing keys private. Never raise spending caps without buyer authorization. Distinguish simulation, native testnet transfers and actual Intents execution.\n');
+await writeFile(join(root,'llms-full.txt'), pages.map(([slug,title,description,body]) => `# ${title}\nhttps://swarmkit.pages.dev/${slug}/\n${description}\n${plain(body)}\n`).join('\n'));
+await writeFile(join(root,'llms.txt'), '# SwarmKit\n\nTypeScript SDK for procurement and agent coordination on NEAR. Package: near-swarmkit.\n\n' + pages.map(([slug,title])=>`- [${title}](https://swarmkit.pages.dev/${slug}/)`).join('\n') + '\n- [Full documentation](https://swarmkit.pages.dev/llms-full.txt)\n\nUse canonical integer strings. Authenticate actors outside the SDK. Keep checkpoints and signing keys private. Never raise spending caps without buyer authorization. Distinguish simulation, native testnet transfers and actual Intents execution.\n');

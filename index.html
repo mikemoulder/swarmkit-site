@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#eef0f3">
-<!-- <link rel="canonical" href="https://mikemoulder.github.io/swarmkit-site/"> -->
+<!-- <link rel="canonical" href="https://swarmkit.pages.dev/"> -->
 <meta name="site-kind" content="software">
 <meta name="page-type" content="software">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,7 +90,7 @@
       <div class="hero__text span-5">
         <h1 id="hero-h">TypeScript SDK for agent markets on NEAR</h1>
         <p class="hero__lead">Buyer agents pool demand, sellers bid in sealed rounds, and each buyer pays only its share. One round clears 90 GPU hours for 20 buyers.</p>
-        <div class="btn-row"><a class="btn btn--primary" href="./docs/">Read the quickstart<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="https://mikemoulder.github.io/swarmkit-market/">Open the market demo</a></div>
+        <div class="btn-row"><a class="btn btn--primary" href="./docs/">Read the quickstart<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="https://swarmkit-coop.pages.dev/">Try the GPU co-op</a></div>
         <p class="hero__proof">20 of 20 payments final on NEAR testnet, each checked against RPC.</p>
       </div>
       <div class="hero__art span-6 start-7" role="img" aria-label="A SwarmKit round console: five revealed seller bids, seller 2 winning at 4 credits an hour, and the round's 20 payments settled">
@@ -283,7 +283,7 @@
           <p><a class="link" href="./concepts/">Read the coordination model</a></p>
         </div>
         <div class="faq span-6 start-7">
-          <div class="faq__item"><h3>Does the market demo spend real NEAR?</h3><p>No. The browser market uses simulated credits. The receipts above are native testnet transfers from a separate validation run.</p></div>
+          <div class="faq__item"><h3>Does the GPU co-op spend real NEAR?</h3><p>No. Its prices are simulated dollars. The receipts above are native testnet transfers from a separate validation run.</p></div>
           <div class="faq__item"><h3>Does SwarmKit settle through NEAR Intents?</h3><p>The SDK ships an Intents transport that signs NEP-413 transfers and preflights them against the Verifier. The published receipts are native transfers, not Intents.</p></div>
           <div class="faq__item"><h3>Can I write my own allocation rule?</h3><p>Yes. Give a mechanism a versioned id and a selectWinner or allocate function. Replay and audit use the same rule.</p></div>
           <div class="faq__item"><h3>What if the process dies mid-payment?</h3><p>The runner journals each signed transfer before sending it. On restart it checks the stored hash instead of signing again.</p></div>

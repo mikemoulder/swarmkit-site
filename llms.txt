@@ -2,16 +2,16 @@
 
 TypeScript SDK for procurement and agent coordination on NEAR. Package: near-swarmkit.
 
-- [Run your first market](https://mikemoulder.github.io/swarmkit-site/docs/)
-- [SDK reference](https://mikemoulder.github.io/swarmkit-site/reference/)
-- [Connect an independent agent](https://mikemoulder.github.io/swarmkit-site/agents/)
-- [Understand the coordination model](https://mikemoulder.github.io/swarmkit-site/concepts/)
-- [Choose and extend allocation rules](https://mikemoulder.github.io/swarmkit-site/mechanisms/)
-- [Run and resume agent simulations](https://mikemoulder.github.io/swarmkit-site/simulation/)
-- [Persist rounds and payment journals](https://mikemoulder.github.io/swarmkit-site/storage/)
-- [Authorize and recover NEAR settlement](https://mikemoulder.github.io/swarmkit-site/settlement/)
-- [Architecture and market rules](https://mikemoulder.github.io/swarmkit-site/architecture/)
-- [Diagnose failures without losing state](https://mikemoulder.github.io/swarmkit-site/errors/)
-- [Full documentation](https://mikemoulder.github.io/swarmkit-site/llms-full.txt)
+- [Run your first market](https://swarmkit.pages.dev/docs/)
+- [SDK reference](https://swarmkit.pages.dev/reference/)
+- [Connect an independent agent](https://swarmkit.pages.dev/agents/)
+- [Understand the coordination model](https://swarmkit.pages.dev/concepts/)
+- [Choose and extend allocation rules](https://swarmkit.pages.dev/mechanisms/)
+- [Run and resume agent simulations](https://swarmkit.pages.dev/simulation/)
+- [Persist rounds and payment journals](https://swarmkit.pages.dev/storage/)
+- [Authorize and recover NEAR settlement](https://swarmkit.pages.dev/settlement/)
+- [Architecture and market rules](https://swarmkit.pages.dev/architecture/)
+- [Diagnose failures without losing state](https://swarmkit.pages.dev/errors/)
+- [Full documentation](https://swarmkit.pages.dev/llms-full.txt)
 
 Use canonical integer strings. Authenticate actors outside the SDK. Keep checkpoints and signing keys private. Never raise spending caps without buyer authorization. Distinguish simulation, native testnet transfers and actual Intents execution.

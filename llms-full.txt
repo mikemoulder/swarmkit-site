@@ -1,5 +1,5 @@
 # Run your first market
-https://mikemoulder.github.io/swarmkit-site/docs/
+https://swarmkit.pages.dev/docs/
 Build a sealed-bid round with two buyers and two sellers. Run it locally with Node 22.18 or newer.
 
  Install the SDK 
@@ -41,7 +41,7 @@ console.log(plan.payments.map(({ buyerId, amount }) => [buyerId, amount]));
  Read the SDK reference 
 
 # SDK reference
-https://mikemoulder.github.io/swarmkit-site/reference/
+https://swarmkit.pages.dev/reference/
 TypeScript contracts generated from the packaged SDK declarations.
  Public entry point Import public symbols from near-swarmkit. The index below lists the public exports; module declarations provide their full types. Supporting internal types are shown for context and are not separate package entry points. index export { commitBid, createRound } from "./round.ts";
 export type { Allocation, Bid, Demand, RoundSnapshot, RoundSpec } from "./round.ts";
@@ -627,7 +627,7 @@ export type Allocation = {
  
 
 # Connect an independent agent
-https://mikemoulder.github.io/swarmkit-site/agents/
+https://swarmkit.pages.dev/agents/
 Build a participant that can submit commands without impersonating another buyer or seller.
 
  Choose the integration boundary For simulation, implement BuyerStrategy.demand and SellerStrategy.offer. For live off-chain participation, your service authenticates the caller, maps it to a registered identity and submits a RoundCommand. Do not accept buyerId or sellerId as proof of identity. 
@@ -657,7 +657,7 @@ Content-Type: application/json
  Instructions for coding agents Full machine-readable documentation includes the public contracts and guides. Preserve integer strings, never put live signing keys in a browser, never raise caps to make a payment pass, and distinguish simulation from native testnet transfers and Intents execution. 
 
 # Understand the coordination model
-https://mikemoulder.github.io/swarmkit-site/concepts/
+https://swarmkit.pages.dev/concepts/
 Learn the objects, trust boundaries and guarantees before connecting real agents.
 
  One round, one resource, one asset A round freezes a participant roster, a resource description, a payment asset and three deadlines. Quantities and amounts are canonical integer strings. Arithmetic uses bigint. A resource label can describe GPU hours, inference credits or dataset seats; it does not implement resource delivery. 
@@ -668,7 +668,7 @@ Learn the objects, trust boundaries and guarantees before connecting real agents
  Current boundaries SwarmKit currently implements procurement. It does not supply escrow, atomic all-buyer settlement, refunds, delivery verification, arbitrary negotiations, compatibility matching or a production identity provider. Python bindings and additional economic protocols remain future work. The deliveryWindow field is descriptive, not an enforced fulfillment deadline. 
 
 # Choose and extend allocation rules
-https://mikemoulder.github.io/swarmkit-site/mechanisms/
+https://swarmkit.pages.dev/mechanisms/
 Use single-seller procurement or split fulfillment, and understand exactly what can be customized.
 
  Lowest-price procurement The default lowest-price-v1 rule selects one seller. Before selection, the SDK rejects offers that cannot fill the complete pool or exceed any buyer’s total cap. The cheapest eligible unit price wins; ASCII seller ID breaks ties. Charges use the selected seller’s quoted price. 
@@ -693,7 +693,7 @@ console.table(decision.buyers); // spend, unused budget, fulfillment lines
 console.table(decision.sellers); // allocation or rejection reason Call this only on a closed round. “Not selected by mechanism” does not imply a bid was invalid. The explanation reports the recorded outcome without pretending to expose the internal reasoning of arbitrary custom plugins. 
 
 # Run and resume agent simulations
-https://mikemoulder.github.io/swarmkit-site/simulation/
+https://swarmkit.pages.dev/simulation/
 Execute policies one stage at a time and keep a private checkpoint across restarts.
 
  Two execution styles simulateProcurement runs a complete deterministic round and returns its stage snapshots, transcript, payment plan and synthetic receipts. Use it for unit tests and experiments. startSimulation creates an empty checkpoint; advanceSimulation executes exactly one stage. Use the incremental API for a scheduler or interactive reference application. 
@@ -718,7 +718,7 @@ npm run serve All these economy runs are simulation. Synthetic receipts and synt
  Runnable example Download incremental-market.mjs . Run it from a project with near-swarmkit installed. It demonstrates serialization and async policies; the reference application supplies actual durable storage. 
 
 # Persist rounds and payment journals
-https://mikemoulder.github.io/swarmkit-site/storage/
+https://swarmkit.pages.dev/storage/
 Choose atomic storage semantics that survive concurrent writers and process restarts.
 
  RoundStore type RoundStore = {
@@ -744,7 +744,7 @@ if (result.status === "conflict") {
  Storage ownership Keep one trusted storage namespace per environment. Protect journals like credentials: their signed bytes may still be broadcastable. Browser simulation storage is suitable for synthetic activity, not for custody of live keys. Use unique round IDs and retain the journal for recovery. 
 
 # Authorize and recover NEAR settlement
-https://mikemoulder.github.io/swarmkit-site/settlement/
+https://swarmkit.pages.dev/settlement/
 Carry an allocation into payments with explicit approval, durable identity and independent receipt checks.
 
  Prepare from the recorded round const plan = await settlementPlanFromTranscript(transcript, customMechanism);
@@ -782,7 +782,7 @@ console.log(report.claimedSummary, report.verifiedSummary);
 console.table(report.checks); Without a verifier, the report checks recorded claims only. With one, it compares observed status and rejects reused transaction hashes. Independent transfers can settle partially; SwarmKit does not reverse a confirmed payment or guarantee resource delivery. 
 
 # Architecture and market rules
-https://mikemoulder.github.io/swarmkit-site/architecture/
+https://swarmkit.pages.dev/architecture/
 See what the SDK owns, what the reference application owns and where NEAR executes.
 
  Three repositories, one SDK boundary swarmkit-site swarmkit-market
@@ -803,7 +803,7 @@ documentation UI / policies / economy controller
  Releases and compatibility The package remains an unpublished 0.1.0 release candidate. Build and install the tarball from source. Transcript version 1, settlement plan versions 1 and 2, and simulation checkpoint version 1 are distinct formats. Do not rewrite saved payment identities or silently swap mechanism versions. The old root dashboard remains a minimal SDK example; the standalone Market is the primary reference application. 
 
 # Diagnose failures without losing state
-https://mikemoulder.github.io/swarmkit-site/errors/
+https://swarmkit.pages.dev/errors/
 Use the failure boundary to decide whether to retry, reconcile or correct configuration.
 
  Round commands Direct coordinator methods return false for rejected submissions. The stored coordinator returns accepted, rejected or conflict. Invalid configuration, backwards clocks, invalid replay and invalid plugin outputs throw errors. There is no stable exported error-code enum yet; do not build critical recovery logic around matching message strings. 
