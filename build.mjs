@@ -119,36 +119,69 @@ for (const [slug, title, description, body] of pages) {
     ['Build a market', [['Allocation rules','mechanisms'],['Simulation & strategies','simulation'],['State & recovery','storage'],['NEAR settlement','settlement']]],
     ['Reference', [['SDK API','reference'],['Architecture','architecture'],['Errors & troubleshooting','errors']]],
     ['For agents', [['Agent integration','agents']]] ];
-  const navigation = groups.map(([group,items])=>`<h2>${group}</h2>`+items.map(([label,path])=>`<a href="../${path}/"${path===slug?' aria-current="page"':''}>${label}</a>`).join('')).join('');
+  const navigation = groups.map(([group,items])=>`<h2>${group}</h2>`+items.map(([label,path])=>`<a class="docs-nav__link" href="../${path}/"${path===slug?' aria-current="page"':''}>${label}</a>`).join('')).join('');
+  const current = groups.flatMap(([, items]) => items).find(([, path]) => path === slug)?.[0] ?? title;
   const headings=[];
   const indexedBody=body.replace(/<h2>(.*?)<\/h2>/g,(_,label)=>{const id=label.replace(/<[^>]*>/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');headings.push([id,label]);return `<h2 id="${id}">${label}</h2>`;});
-  const pageIndex=pages.findIndex(p=>p[0]===slug),next=pages[(pageIndex+1)%pages.length];
+  const order = groups.flatMap(([, items]) => items.map(([, path]) => path));
+  const nextSlug = order[(order.indexOf(slug) + 1) % order.length], next = pages.find(([s]) => s === nextSlug) ?? pages[0];
   const html = `<!doctype html>
-<html lang="en" data-type="software" data-radius="sharp">
+<html lang="en" data-type="software" data-radius="sharp" data-buttons="tonal">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${title} | SwarmKit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>${title} · SwarmKit docs</title>
   <meta name="description" content="${description}">
-  <meta name="theme-color" content="#191b19">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="${title} · SwarmKit docs">
+  <meta property="og:description" content="${description}">
+  <meta property="og:image" content="../share.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#eef0f3">
   <meta name="page-type" content="software">
   <meta name="site-kind" content="software">
-  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/system.css">
-  <link rel="stylesheet" href="../site.css?v=20261114-3">
+  <style>:root{--p-bg:#eef0f3;--p-surface:#e2e5ea;--p-ink:#0b0c0e;--p-muted:#5d6470;--p-accent:#1f2de6;--p-accent-ink:#fff;--p-action:#1f2de6;--p-action-ink:#fff;--font-display:"Instrument Sans",system-ui,sans-serif;--font-text:"Instrument Sans",system-ui,sans-serif;--font-mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;--display-weight:500;--display-tracking:-0.028em;--display-tracking-xl:-0.036em;--display-stretch:96%}</style>
+  <link rel="stylesheet" href="../site.css?v=20261114-4">
 </head>
-<body class="docs-body">
-  <header class="site-header"><div class="wrap topbar">
-    <a class="skip-link" href="#main">Skip to content</a>
-    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
-    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
-  </div></header>
-  <main id="main" class="wrap docs-layout">
-    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups">${navigation}</div></nav>
-    <article class="docs-content"><div class="doc-breadcrumb">Documentation / ${slug==='docs'?'Quickstart':slug}</div><h1>${title}</h1><p>${description}</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>${indexedBody}<nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../${next[0]}/">${next[1]} ↗</a></nav></article>
-    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2>${headings.map(([id,label])=>`<a href="#${id}">${label}</a>`).join('')}</aside>
+<body class="docs-page">
+  <header class="nav">
+    <div class="wrap nav__bar">
+      <a class="skip-link" href="#doc">Skip to content</a>
+      <a class="nav__logo" href="../"><span class="mark mark--initial" aria-hidden="true">S</span>SwarmKit</a>
+      <nav class="nav__links" aria-label="Main">
+        <div class="nav__item"><a class="nav__link" href="../docs/"${slug==='docs'?' aria-current="page"':''}>Docs</a></div>
+        <div class="nav__item"><a class="nav__link" href="../reference/"${slug==='reference'?' aria-current="page"':''}>Reference</a></div>
+        <div class="nav__item"><a class="nav__link" href="../agents/"${slug==='agents'?' aria-current="page"':''}>Agents</a></div>
+        <div class="nav__item"><a class="nav__link" href="https://mikemoulder.github.io/swarmkit-market/">Market demo</a></div>
+      </nav>
+      <div class="nav__actions"><a class="btn btn--secondary" href="https://github.com/mikemoulder/swarmkit">View on GitHub</a></div>
+    </div>
+  </header>
+  <main class="docs">
+    <div class="wrap">
+      <nav class="docs-nav" aria-label="Documentation">
+        <button class="docs-menu" type="button" aria-expanded="false" aria-controls="docs-groups">Browse the docs <span aria-hidden="true">+</span></button>
+        <label class="docs-nav__search">Search the docs<input type="search" id="doc-search" autocomplete="off" placeholder="createRound, journal, Intents"></label>
+        <div id="search-results" aria-live="polite"></div>
+        <div class="docs-nav__groups" id="docs-groups">${navigation}</div>
+      </nav>
+      <article class="doc" id="doc">
+        <p class="doc__crumb">Docs / ${current}</p>
+        <h1>${title}</h1>
+        <p class="doc__lead">${description}</p>
+        <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
+        <div class="doc__body">${indexedBody}</div>
+        <nav class="doc__next" aria-label="Next page"><span>Next</span><a href="../${next[0]}/">${next[1]} →</a></nav>
+      </article>
+      <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2>${headings.map(([id,label])=>`<a href="#${id}">${label.replace(/<[^>]*>/g,'')}</a>`).join('')}</aside>
+    </div>
   </main>
-  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+  <footer class="docs-foot"><div class="wrap"><span>© 2026 SwarmKit · near-swarmkit 0.1.0 · MIT or Apache-2.0</span><nav aria-label="Footer"><a href="../">Home</a><a href="../llms.txt">llms.txt</a><a href="https://github.com/mikemoulder/swarmkit">SDK source</a><a href="https://github.com/mikemoulder/swarmkit-market">Market source</a></nav></div></footer>
 <script src="../docs.js" defer></script></body>
 </html>
 `;
