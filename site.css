@@ -174,3 +174,7 @@
 }
 @media (max-width: 379px) { .nav__actions .btn { display: none; } }
 @media (max-width: 639px) { #questions .faq__item:nth-child(5), #questions .grid > div:first-child > p { display: none; } }
+
+/* ---------- the SwarmKit mark: six agents trace an S, the winning bid at its centre ---------- */
+.nav__logo .logo-mark { width: 24px; height: 24px; flex: none; }
+footer .nav__logo .logo-mark { width: 22px; height: 22px; }
