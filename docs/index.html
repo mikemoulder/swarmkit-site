@@ -51,32 +51,32 @@
         <div class="doc__body">
     <h2 id="install-the-sdk">Install the SDK</h2>
     <p>Run <code>npm ci</code> and <code>npm run pack:sdk</code> in the <a href="https://github.com/mikemoulder/swarmkit">SDK repository</a>. Install the resulting tarball in your Node project. The package name is <code>near-swarmkit</code>.</p>
-    <pre><code>npm install /path/to/near-swarmkit-0.1.0.tgz</code></pre>
+    <pre data-lang="shell"><code><span class="tk-fn">npm</span> install <span class="tk-string">/path/to/near-swarmkit-0.1.0.tgz</span></code></pre>
     <h2 id="pool-inference-demand">Pool inference demand</h2>
     <p>Save this as <code>market.mjs</code> and run <code>node market.mjs</code>. Use integer strings for quantity and amounts.</p>
-    <pre><code id="quickstart">import { simulateProcurement } from "near-swarmkit";
+    <pre data-lang="ts"><code id="quickstart"><span class="tk-keyword">import</span> { simulateProcurement } <span class="tk-keyword">from</span> <span class="tk-string">"near-swarmkit"</span>;
 
-const { plan } = await simulateProcurement({
-  seed: 42,
+<span class="tk-keyword">const</span> { plan } = <span class="tk-keyword">await</span> <span class="tk-fn">simulateProcurement</span>({
+  seed: <span class="tk-number">42</span>,
   spec: {
-    id: "inference-credits-01",
-    resource: { label: "Inference credits", unit: "credit", deliveryWindow: "Today" },
-    asset: "demo-credits",
-    demandCloses: 10,
-    commitCloses: 20,
-    revealCloses: 30,
+    id: <span class="tk-string">"inference-credits-01"</span>,
+    resource: { label: <span class="tk-string">"Inference credits"</span>, unit: <span class="tk-string">"credit"</span>, deliveryWindow: <span class="tk-string">"Today"</span> },
+    asset: <span class="tk-string">"demo-credits"</span>,
+    demandCloses: <span class="tk-number">10</span>,
+    commitCloses: <span class="tk-number">20</span>,
+    revealCloses: <span class="tk-number">30</span>,
   },
   buyers: [
-    { id: "research", demand: () =&gt; ({ quantity: "3", budget: "15" }) },
-    { id: "indexer", demand: () =&gt; ({ quantity: "2", budget: "10" }) },
+    { id: <span class="tk-string">"research"</span>, demand: () =&gt; ({ quantity: <span class="tk-string">"3"</span>, budget: <span class="tk-string">"15"</span> }) },
+    { id: <span class="tk-string">"indexer"</span>, demand: () =&gt; ({ quantity: <span class="tk-string">"2"</span>, budget: <span class="tk-string">"10"</span> }) },
   ],
   sellers: [
-    { id: "fastlane", offer: () =&gt; ({ capacity: "4", unitPrice: "3" }) },
-    { id: "northstar", offer: () =&gt; ({ capacity: "5", unitPrice: "4" }) },
+    { id: <span class="tk-string">"fastlane"</span>, offer: () =&gt; ({ capacity: <span class="tk-string">"4"</span>, unitPrice: <span class="tk-string">"3"</span> }) },
+    { id: <span class="tk-string">"northstar"</span>, offer: () =&gt; ({ capacity: <span class="tk-string">"5"</span>, unitPrice: <span class="tk-string">"4"</span> }) },
   ],
 });
 
-console.log(plan.payments.map(({ buyerId, amount }) =&gt; [buyerId, amount]));</code></pre>
+console.<span class="tk-fn">log</span>(plan.payments.<span class="tk-fn">map</span>(({ buyerId, amount }) =&gt; [buyerId, amount]));</code></pre>
     <p>The first offer is cheaper but covers only four credits. The second seller clears all five. Research owes 12 credits and Indexer owes eight.</p>
     <h2 id="follow-a-round-into-settlement">Follow a round into settlement</h2>
     <ol>

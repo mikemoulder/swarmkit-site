@@ -120,6 +120,15 @@
 .code-block { position: relative; margin: 0 0 var(--s-5); }
 .doc__body pre { margin: 0; padding: var(--s-5); padding-top: var(--s-7); overflow: auto; background: #0f1115; color: #e6e8ee; border-radius: var(--r-md); font: 400 13.5px/1.75 var(--font-mono); }
 .doc__body pre code { font: inherit; background: none; padding: 0; }
+/* syntax colours (build-time spans from highlight.mjs); every token 7:1 or more on #0f1115 */
+.doc__body pre .tk-keyword { color: #9fb0ff; }
+.doc__body pre .tk-string { color: #b9e3c6; }
+.doc__body pre .tk-number, .doc__body pre .tk-literal { color: #f5c58a; }
+.doc__body pre .tk-comment { color: #a3a9b5; font-style: italic; }
+.doc__body pre .tk-type { color: #f2b8cf; }
+.doc__body pre .tk-fn { color: #7fd4ff; }
+.doc__body pre[data-lang]::before { content: attr(data-lang); position: absolute; top: var(--s-3); left: var(--s-5); font: 500 12px/1 var(--font-mono); color: #a3a9b5; text-transform: lowercase; }
+.doc__body pre[data-lang="ts"]::before { content: "typescript"; }
 .copy-code { position: absolute; top: var(--s-2); right: var(--s-2); min-height: 32px; padding: 0 var(--s-3); border: 1px solid rgb(255 255 255 / .16); border-radius: var(--r-sm); background: transparent; color: #c6cad3; font: 500 13px/1 var(--font-text); cursor: pointer; }
 .copy-code:hover { color: #fff; border-color: rgb(255 255 255 / .4); }
 .doc__body table { width: 100%; border-collapse: collapse; margin: 0 0 var(--s-6); font-size: var(--t-small); display: block; overflow-x: auto; }

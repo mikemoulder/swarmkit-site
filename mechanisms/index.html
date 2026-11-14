@@ -50,25 +50,25 @@
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
         <div class="doc__body">
 <h2 id="lowest-price-procurement">Lowest-price procurement</h2><p>The default lowest-price-v1 rule selects one seller. Before selection, the SDK rejects offers that cannot fill the complete pool or exceed any buyer’s total cap. The cheapest eligible unit price wins; ASCII seller ID breaks ties. Charges use the selected seller’s quoted price.</p>
-<h2 id="split-fulfillment">Split fulfillment</h2><pre><code>import { cheapestCapacity, createRound } from "near-swarmkit";
-const round = createRound({ ...spec, mechanismId: cheapestCapacity.id });</code></pre><p>cheapest-capacity-v1 orders buyers by budget per unit, tightest first, then draws inventory from sellers in ascending price order. The result must fill all admitted demand. A null result is no sale. This is a greedy heuristic; failure does not prove that no feasible allocation exists.</p>
-<h2 id="a-custom-winner-rule">A custom winner rule</h2><pre><code>const mostCapacity = {
-  id: "capacity-first-v1",
-  selectWinner(offers) {
-    return [...offers].sort((a, b) =&gt; {
-      const delta = BigInt(b.capacity) - BigInt(a.capacity);
-      return delta &lt; 0n ? -1 : delta &gt; 0n ? 1
-        : a.sellerId &lt; b.sellerId ? -1 : a.sellerId &gt; b.sellerId ? 1 : 0;
-    })[0]?.sellerId ?? null;
+<h2 id="split-fulfillment">Split fulfillment</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> { cheapestCapacity, createRound } <span class="tk-keyword">from</span> <span class="tk-string">"near-swarmkit"</span>;
+<span class="tk-keyword">const</span> round = <span class="tk-fn">createRound</span>({ ...spec, mechanismId: cheapestCapacity.id });</code></pre><p>cheapest-capacity-v1 orders buyers by budget per unit, tightest first, then draws inventory from sellers in ascending price order. The result must fill all admitted demand. A null result is no sale. This is a greedy heuristic; failure does not prove that no feasible allocation exists.</p>
+<h2 id="a-custom-winner-rule">A custom winner rule</h2><pre data-lang="ts"><code><span class="tk-keyword">const</span> mostCapacity = {
+  id: <span class="tk-string">"capacity-first-v1"</span>,
+  <span class="tk-fn">selectWinner</span>(offers) {
+    <span class="tk-keyword">return</span> [...offers].<span class="tk-fn">sort</span>((a, b) =&gt; {
+      <span class="tk-keyword">const</span> delta = <span class="tk-type">BigInt</span>(b.capacity) - <span class="tk-type">BigInt</span>(a.capacity);
+      <span class="tk-keyword">return</span> delta &lt; <span class="tk-number">0n</span> ? -<span class="tk-number">1</span> : delta &gt; <span class="tk-number">0n</span> ? <span class="tk-number">1</span>
+        : a.sellerId &lt; b.sellerId ? -<span class="tk-number">1</span> : a.sellerId &gt; b.sellerId ? <span class="tk-number">1</span> : <span class="tk-number">0</span>;
+    })[<span class="tk-number">0</span>]?.sellerId ?? <span class="tk-literal">null</span>;
   },
 };
-const round = createRound({ ...spec, mechanismId: mostCapacity.id }, Date.now, mostCapacity);</code></pre>
+<span class="tk-keyword">const</span> round = <span class="tk-fn">createRound</span>({ ...spec, mechanismId: mostCapacity.id }, <span class="tk-type">Date</span>.now, mostCapacity);</code></pre>
 <h2 id="a-custom-split-rule">A custom split rule</h2><p>Implement allocate(buyers, offers) instead of selectWinner. Return null or an array of { buyerId, sellerId, quantity }. Each buyer–seller pair must be unique. The SDK computes amounts at the revealed bid prices, verifies every buyer is filled exactly, and rejects over-budget or over-capacity results. It does not accept custom payment prices through this interface.</p>
 <h2 id="keep-replay-deterministic">Keep replay deterministic</h2><p>Give each implementation a versioned ID and supply the same implementation to createRound, replayRound, resumeRound, settlementPlanFromTranscript and auditSettlement. Never silently change an implementation behind an old ID. Avoid wall clocks, random tie-breaking or network calls inside allocation functions.</p>
-<h2 id="inspect-the-decision">Inspect the decision</h2><pre><code>const decision = explainAllocation(round.snapshot());
-console.log(decision.reason);
-console.table(decision.buyers); // spend, unused budget, fulfillment lines
-console.table(decision.sellers); // allocation or rejection reason</code></pre><p>Call this only on a closed round. “Not selected by mechanism” does not imply a bid was invalid. The explanation reports the recorded outcome without pretending to expose the internal reasoning of arbitrary custom plugins.</p></div>
+<h2 id="inspect-the-decision">Inspect the decision</h2><pre data-lang="ts"><code><span class="tk-keyword">const</span> decision = <span class="tk-fn">explainAllocation</span>(round.<span class="tk-fn">snapshot</span>());
+console.<span class="tk-fn">log</span>(decision.reason);
+console.<span class="tk-fn">table</span>(decision.buyers); <span class="tk-comment">// spend, unused budget, fulfillment lines</span>
+console.<span class="tk-fn">table</span>(decision.sellers); <span class="tk-comment">// allocation or rejection reason</span></code></pre><p>Call this only on a closed round. “Not selected by mechanism” does not imply a bid was invalid. The explanation reports the recorded outcome without pretending to expose the internal reasoning of arbitrary custom plugins.</p></div>
         <nav class="doc__next" aria-label="Next page"><span>Next</span><a href="../simulation/">Run and resume agent simulations →</a></nav>
       </article>
       <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#lowest-price-procurement">Lowest-price procurement</a><a href="#split-fulfillment">Split fulfillment</a><a href="#a-custom-winner-rule">A custom winner rule</a><a href="#a-custom-split-rule">A custom split rule</a><a href="#keep-replay-deterministic">Keep replay deterministic</a><a href="#inspect-the-decision">Inspect the decision</a></aside>

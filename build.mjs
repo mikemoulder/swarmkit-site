@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile, readdir, copyFile } from "node:fs/promises";
 import { guidePages } from "./guides.mjs";
+import { highlightBlocks } from "./highlight.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -175,7 +176,7 @@ for (const [slug, title, description, body] of pages) {
         <h1>${title}</h1>
         <p class="doc__lead">${description}</p>
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
-        <div class="doc__body">${indexedBody}</div>
+        <div class="doc__body">${highlightBlocks(indexedBody)}</div>
         <nav class="doc__next" aria-label="Next page"><span>Next</span><a href="../${next[0]}/">${next[1]} →</a></nav>
       </article>
       <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2>${headings.map(([id,label])=>`<a href="#${id}">${label.replace(/<[^>]*>/g,'')}</a>`).join('')}</aside>

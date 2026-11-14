@@ -49,24 +49,24 @@
         <p class="doc__lead">Choose atomic storage semantics that survive concurrent writers and process restarts.</p>
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
         <div class="doc__body">
-<h2 id="roundstore">RoundStore</h2><pre><code>type RoundStore = {
-  read(roundId: string): Promise&lt;RoundTranscript | undefined&gt;;
-  compareAndSet(next: RoundTranscript, expectedRevision: number | null): Promise&lt;boolean&gt;;
+<h2 id="roundstore">RoundStore</h2><pre data-lang="ts"><code><span class="tk-keyword">type</span> <span class="tk-type">RoundStore</span> = {
+  <span class="tk-fn">read</span>(roundId: <span class="tk-type">string</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">RoundTranscript</span> | <span class="tk-literal">undefined</span>&gt;;
+  <span class="tk-fn">compareAndSet</span>(next: <span class="tk-type">RoundTranscript</span>, expectedRevision: <span class="tk-type">number</span> | <span class="tk-literal">null</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">boolean</span>&gt;;
 };</code></pre><p>The revision is the number of accepted events. null means “insert only if absent.” A non-null revision means “update only if the stored event count still matches.” Do not implement this as a separate read followed by an unconditional write.</p>
-<pre><code>const store = sqliteRoundStore("./rounds.sqlite");
-await openStoredRound(spec, store);
-const result = await submitStoredRoundEvent(spec.id, {
-  type: "demand", buyerId: authenticatedBuyerId,
-  request: { quantity: "2", budget: "10" },
+<pre data-lang="ts"><code><span class="tk-keyword">const</span> store = <span class="tk-fn">sqliteRoundStore</span>(<span class="tk-string">"./rounds.sqlite"</span>);
+<span class="tk-keyword">await</span> <span class="tk-fn">openStoredRound</span>(spec, store);
+<span class="tk-keyword">const</span> result = <span class="tk-keyword">await</span> <span class="tk-fn">submitStoredRoundEvent</span>(spec.id, {
+  <span class="tk-keyword">type</span>: <span class="tk-string">"demand"</span>, buyerId: authenticatedBuyerId,
+  request: { quantity: <span class="tk-string">"2"</span>, budget: <span class="tk-string">"10"</span> },
 }, store);
-if (result.status === "conflict") {
-  // Read the current round, recheck its phase, then decide whether to retry.
+<span class="tk-keyword">if</span> (result.status === <span class="tk-string">"conflict"</span>) {
+  <span class="tk-comment">// Read the current round, recheck its phase, then decide whether to retry.</span>
 }</code></pre><p><a href="../examples/sqlite-round-store.mjs">The complete SQLite adapter</a> uses an atomic conditional UPDATE, WAL and FULL synchronization. Node 22.18’s built-in SQLite API is experimental. Applications may implement the same interface with another database.</p>
 <h2 id="settlementjournal">SettlementJournal</h2><p>read retrieves a payment entry. reserve atomically inserts a candidate if absent and returns the existing winner otherwise. The entry contains the payment and signed bytes/hash. bindPlan atomically stores or matches the complete plan fingerprint. Split settlement requires bindPlan; its absence is an error.</p>
-<pre><code>const journal = {
-  read: async scope =&gt; loadEntry(scope),
-  reserve: async (scope, candidate) =&gt; insertOrReadAtomically(scope, candidate),
-  bindPlan: async (scope, fingerprint) =&gt; insertOrCompareAtomically(scope, fingerprint),
+<pre data-lang="ts"><code><span class="tk-keyword">const</span> journal = {
+  read: <span class="tk-keyword">async</span> scope =&gt; <span class="tk-fn">loadEntry</span>(scope),
+  reserve: <span class="tk-keyword">async</span> (scope, candidate) =&gt; <span class="tk-fn">insertOrReadAtomically</span>(scope, candidate),
+  bindPlan: <span class="tk-keyword">async</span> (scope, fingerprint) =&gt; <span class="tk-fn">insertOrCompareAtomically</span>(scope, fingerprint),
 };</code></pre><p>The snippet states the required adapter contract; loadEntry and the two atomic functions are your database operations, not SDK exports. The reference market contains implemented IndexedDB and SQLite stores and a durable simulation journal. Its Intents CLI contains a separate file journal for live execution.</p>
 <h2 id="order-of-durability">Order of durability</h2><ol><li>Freeze the allocation and bind the payment plan.</li><li>Authorize, prepare the transaction and durably reserve its signed bytes.</li><li>Inspect the stored hash, then broadcast only those bytes if allowed.</li><li>Record finalized receipts and apply application ledger changes once per payment ID.</li></ol><p>A transport exception must not cause you to discard the journal and prepare a replacement. A pending transaction can already have been broadcast. Reconcile it first. Independent payments can settle partially.</p>
 <h2 id="storage-ownership">Storage ownership</h2><p>Keep one trusted storage namespace per environment. Protect journals like credentials: their signed bytes may still be broadcastable. Browser simulation storage is suitable for synthetic activity, not for custody of live keys. Use unique round IDs and retain the journal for recovery.</p></div>

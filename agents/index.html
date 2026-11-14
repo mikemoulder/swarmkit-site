@@ -50,26 +50,26 @@
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
         <div class="doc__body">
 <h2 id="choose-the-integration-boundary">Choose the integration boundary</h2><p>For simulation, implement BuyerStrategy.demand and SellerStrategy.offer. For live off-chain participation, your service authenticates the caller, maps it to a registered identity and submits a RoundCommand. Do not accept buyerId or sellerId as proof of identity.</p>
-<pre><code>const buyer = {
-  id: "research-agent",
-  async demand() {
-    const quantity = Math.min(workQueue.length, Math.floor(balance / unitCap));
-    return quantity ? { quantity: String(quantity), budget: String(quantity * unitCap) } : null;
+<pre data-lang="ts"><code><span class="tk-keyword">const</span> buyer = {
+  id: <span class="tk-string">"research-agent"</span>,
+  <span class="tk-keyword">async</span> <span class="tk-fn">demand</span>() {
+    <span class="tk-keyword">const</span> quantity = <span class="tk-type">Math</span>.<span class="tk-fn">min</span>(workQueue.length, <span class="tk-type">Math</span>.<span class="tk-fn">floor</span>(balance / unitCap));
+    <span class="tk-keyword">return</span> quantity ? { quantity: <span class="tk-type">String</span>(quantity), budget: <span class="tk-type">String</span>(quantity * unitCap) } : <span class="tk-literal">null</span>;
   },
 };</code></pre><p>Here workQueue, balance and unitCap are application state. The callback proposes demand; coordinator validation and settlement approval remain separate enforcement steps.</p>
 <h2 id="a-complete-service-recipe">A complete service recipe</h2><p><a href="../examples/agent-service.mjs">agent-service.mjs</a> exposes POST /command, derives the actor from a bearer credential, checks its buyer/seller role, limits request size, and delegates phase and commitment validation to submitStoredRoundEvent. Combine it with the <a href="../examples/sqlite-round-store.mjs">SQLite store</a>. The test uses a separate HTTP client, rejects a buyer attempting a seller command, and verifies durable identity attribution.</p>
-<pre><code>const store = sqliteRoundStore("./rounds.sqlite");
-await openStoredRound(spec, store);
-const service = createAgentService({ store, credentials: [
-  { token: process.env.BUYER_TOKEN, id: "buyer.example.testnet", role: "buyer" },
-  { token: process.env.SELLER_TOKEN, id: "seller.example.testnet", role: "seller" },
+<pre data-lang="ts"><code><span class="tk-keyword">const</span> store = <span class="tk-fn">sqliteRoundStore</span>(<span class="tk-string">"./rounds.sqlite"</span>);
+<span class="tk-keyword">await</span> <span class="tk-fn">openStoredRound</span>(spec, store);
+<span class="tk-keyword">const</span> service = <span class="tk-fn">createAgentService</span>({ store, credentials: [
+  { token: process.env.<span class="tk-type">BUYER_TOKEN</span>, id: <span class="tk-string">"buyer.example.testnet"</span>, role: <span class="tk-string">"buyer"</span> },
+  { token: process.env.<span class="tk-type">SELLER_TOKEN</span>, id: <span class="tk-string">"seller.example.testnet"</span>, role: <span class="tk-string">"seller"</span> },
 ] });
-service.listen(4100, "127.0.0.1");</code></pre><p>Import the two example factories from the files you downloaded; openStoredRound comes from near-swarmkit. Validate your token configuration before starting. This local recipe does not provide user signup, credential rotation or public TLS hosting.</p>
-<h2 id="submit-demand">Submit demand</h2><pre><code>POST /command
-Authorization: Bearer &lt;buyer-token&gt;
-Content-Type: application/json
+service.<span class="tk-fn">listen</span>(<span class="tk-number">4100</span>, <span class="tk-string">"127.0.0.1"</span>);</code></pre><p>Import the two example factories from the files you downloaded; openStoredRound comes from near-swarmkit. Validate your token configuration before starting. This local recipe does not provide user signup, credential rotation or public TLS hosting.</p>
+<h2 id="submit-demand">Submit demand</h2><pre data-lang="http"><code><span class="tk-keyword">POST</span> <span class="tk-string">/command</span>
+<span class="tk-type">Authorization</span>: <span class="tk-type">Bearer</span> &lt;buyer-token&gt;
+<span class="tk-type">Content</span>-<span class="tk-type">Type</span>: application/json
 
-{"roundId":"round-01","type":"demand","request":{"quantity":"3","budget":"15"}}</code></pre>
+{<span class="tk-string">"roundId"</span>:<span class="tk-string">"round-01"</span>,<span class="tk-string">"type"</span>:<span class="tk-string">"demand"</span>,<span class="tk-string">"request"</span>:{<span class="tk-string">"quantity"</span>:<span class="tk-string">"3"</span>,<span class="tk-string">"budget"</span>:<span class="tk-string">"15"</span>}}</code></pre>
 <h2 id="commit-then-reveal">Commit, then reveal</h2><p>The seller generates a fresh 32-byte cryptographic salt, keeps the bid private, computes commitBid(roundId, sellerId, bid), and submits a commitment command during the commit window. During the reveal window it submits the original bid. Persist the salt privately so a process restart does not lose the reveal. An unrevealed bid cannot receive an allocation.</p>
 <h2 id="handle-responses-deliberately">Handle responses deliberately</h2><table class="doc-table"><thead><tr><th>Status</th><th>Agent action</th></tr></thead><tbody><tr><td>200</td><td>Command accepted. Keep the returned snapshot.</td></tr><tr><td>401 / 403</td><td>Fix authentication or role. Do not retry under an invented identity.</td></tr><tr><td>409</td><td>Re-read current state and reconsider the command before retrying.</td></tr><tr><td>422</td><td>Inspect deadline, roster and bid validity. Do not automatically raise a buyer cap.</td></tr></tbody></table>
 <h2 id="separate-spending-permission">Separate spending permission</h2><p>An accepted demand is not a signature authorizing a transfer. Review the closed plan, create a SpendingPolicy, sign spendingPolicyMessage(policy) with the buyer’s Ed25519 key, and give the runner a trusted buyer-to-public-key resolver. The application must still authorize the transport’s actual signing keys.</p>

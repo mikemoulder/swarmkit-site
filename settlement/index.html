@@ -49,39 +49,39 @@
         <p class="doc__lead">Carry an allocation into payments with explicit approval, durable identity and independent receipt checks.</p>
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
         <div class="doc__body">
-<h2 id="prepare-from-the-recorded-round">Prepare from the recorded round</h2><pre><code>const plan = await settlementPlanFromTranscript(transcript, customMechanism);
-const result = await executeWithSpendingPolicies(plan, {
+<h2 id="prepare-from-the-recorded-round">Prepare from the recorded round</h2><pre data-lang="ts"><code><span class="tk-keyword">const</span> plan = <span class="tk-keyword">await</span> <span class="tk-fn">settlementPlanFromTranscript</span>(transcript, customMechanism);
+<span class="tk-keyword">const</span> result = <span class="tk-keyword">await</span> <span class="tk-fn">executeWithSpendingPolicies</span>(plan, {
   transport, journal, approvals, resolveBuyerKey,
 });
-console.log(result.summary); // confirmed, pending, failed, paid</code></pre><p>Omit customMechanism for a built-in rule. Every payment carries a canonical integer amount. Version 1 IDs bind round and buyer; version 2 binds round, buyer and seller. Split plans must be atomically bound before execution.</p>
-<h2 id="buyer-signed-spending-policy">Buyer-signed spending policy</h2><pre><code>const policy = {
+console.<span class="tk-fn">log</span>(result.summary); <span class="tk-comment">// confirmed, pending, failed, paid</span></code></pre><p>Omit customMechanism for a built-in rule. Every payment carries a canonical integer amount. Version 1 IDs bind round and buyer; version 2 binds round, buyer and seller. Split plans must be atomically bound before execution.</p>
+<h2 id="buyer-signed-spending-policy">Buyer-signed spending policy</h2><pre data-lang="ts"><code><span class="tk-keyword">const</span> policy = {
   roundId: plan.roundId,
-  buyerId: "buyer.example.testnet",
+  buyerId: <span class="tk-string">"buyer.example.testnet"</span>,
   asset: plan.asset,
   transportScope: transport.scope,
-  sellers: ["seller.example.testnet"],
-  maxAmount: "1000000000000000000000",
-  expiresAt: Date.now() + 300_000,
+  sellers: [<span class="tk-string">"seller.example.testnet"</span>],
+  maxAmount: <span class="tk-string">"1000000000000000000000"</span>,
+  expiresAt: <span class="tk-type">Date</span>.<span class="tk-fn">now</span>() + <span class="tk-number">300_000</span>,
 };
-const bytes = spendingPolicyMessage(policy);
-// Sign bytes with the trusted buyer Ed25519 approval key.
-// Pass { policy, signature: Uint8Array } in approvals.</code></pre><p>The signature binds round, buyer, asset, transport, seller allowlist, cumulative cap and expiry. The runner checks approval before preparation and again before broadcasting. Trust the resolver, not a public key supplied by an agent request. These are application-enforced policies, not NEAR restricted access keys or an on-chain spending contract.</p>
+<span class="tk-keyword">const</span> bytes = <span class="tk-fn">spendingPolicyMessage</span>(policy);
+<span class="tk-comment">// Sign bytes with the trusted buyer Ed25519 approval key.</span>
+<span class="tk-comment">// Pass { policy, signature: Uint8Array } in approvals.</span></code></pre><p>The signature binds round, buyer, asset, transport, seller allowlist, cumulative cap and expiry. The runner checks approval before preparation and again before broadcasting. Trust the resolver, not a public key supplied by an agent request. These are application-enforced policies, not NEAR restricted access keys or an on-chain spending contract.</p>
 <h2 id="native-testnet-near">Native testnet NEAR</h2><p>nearTestnetTransport accepts your exact-payment signer. The signer constructs one native transfer from buyer to seller. The transport checks finalized sender, recipient, amount and action before confirming. Use the native testnet asset constant and named testnet accounts. The packaged SDK’s main runtime has zero dependencies; the separate live example uses near-api-js.</p>
-<h2 id="run-the-reference-testnet-validation">Run the reference testnet validation</h2><p>From the swarmkit-market repository, install dependencies and run:</p><pre><code>npm run testnet -- --faucet-testnet --gpu
-npm run testnet -- --faucet-testnet --split
-npm run testnet:audit -- .market/testnet/&lt;printed-account&gt;/evidence.json</code></pre><p>The first run provisions 20 buyers and five sellers; the second allocates one buyer across two sellers. Both use disposable faucet accounts, incremental SDK stages and actual native testnet transfers. The runner interrupts after journaling the first signed transaction, resumes, and audits each finalized sender, recipient and amount. Evidence and signed journals remain under ignored .market/testnet; only public evidence should be shared. Keys are memory-only: this bounded validation tool is not a persistent wallet service. No mainnet tokens are needed.</p><p>The 14 November validation finalized all 20 GPU payments (0.036 testnet NEAR) and both split payments (0.0014 testnet NEAR). These validate coordination-to-native-payment integration, not resource delivery or Intents. The browser credit economy remains separate.</p><h2 id="near-intents">NEAR Intents</h2><p>nearIntentsTransport operates on supported NEP-141 balances held in the mainnet Verifier. Buyers need funded Verifier balances and recognized signing keys. A buyer callback signs the exact NEP-413 message; a relayer callback signs the execute_intents transaction. The adapter simulates each transfer before requesting the relayer signature, then checks finalized execution against the approved payment.</p>
-<pre><code>const transport = nearIntentsTransport({
-  asset: "nep141:wrap.near",
-  relayerId: "your-relayer.near",
+<h2 id="run-the-reference-testnet-validation">Run the reference testnet validation</h2><p>From the swarmkit-market repository, install dependencies and run:</p><pre data-lang="shell"><code><span class="tk-fn">npm</span> run testnet <span class="tk-keyword">--</span> <span class="tk-keyword">--faucet-testnet</span> <span class="tk-keyword">--gpu</span>
+<span class="tk-fn">npm</span> run testnet <span class="tk-keyword">--</span> <span class="tk-keyword">--faucet-testnet</span> <span class="tk-keyword">--split</span>
+<span class="tk-fn">npm</span> run testnet:audit <span class="tk-keyword">--</span> .market/testnet/&lt;printed-account&gt;/evidence.json</code></pre><p>The first run provisions 20 buyers and five sellers; the second allocates one buyer across two sellers. Both use disposable faucet accounts, incremental SDK stages and actual native testnet transfers. The runner interrupts after journaling the first signed transaction, resumes, and audits each finalized sender, recipient and amount. Evidence and signed journals remain under ignored .market/testnet; only public evidence should be shared. Keys are memory-only: this bounded validation tool is not a persistent wallet service. No mainnet tokens are needed.</p><p>The 14 November validation finalized all 20 GPU payments (0.036 testnet NEAR) and both split payments (0.0014 testnet NEAR). These validate coordination-to-native-payment integration, not resource delivery or Intents. The browser credit economy remains separate.</p><h2 id="near-intents">NEAR Intents</h2><p>nearIntentsTransport operates on supported NEP-141 balances held in the mainnet Verifier. Buyers need funded Verifier balances and recognized signing keys. A buyer callback signs the exact NEP-413 message; a relayer callback signs the execute_intents transaction. The adapter simulates each transfer before requesting the relayer signature, then checks finalized execution against the approved payment.</p>
+<pre data-lang="ts"><code><span class="tk-keyword">const</span> transport = <span class="tk-fn">nearIntentsTransport</span>({
+  asset: <span class="tk-string">"nep141:wrap.near"</span>,
+  relayerId: <span class="tk-string">"your-relayer.near"</span>,
   signIntent: buyerNep413Signer,
   signTransaction: relayerTransactionSigner,
 });</code></pre><p>The callbacks above are application implementations. The <a href="https://github.com/mikemoulder/swarmkit-market/blob/main/scripts/intents.mjs">operator CLI</a> provides an implementation using near-api-js. A recipient receives a Verifier balance; withdrawing it is a separate operation. This adapter does not offer cross-chain routing or solver optimization.</p>
 <h2 id="recovery-states">Recovery states</h2><table class="doc-table"><thead><tr><th>Observation</th><th>Behavior</th></tr></thead><tbody><tr><td>No journal entry</td><td>Check authorization before preparing.</td></tr><tr><td>Pending recorded hash</td><td>Inspect it; rebroadcast only the same stored bytes if still authorized.</td></tr><tr><td>Final confirmed payment</td><td>Reconcile it; do not sign again.</td></tr><tr><td>Final failed payment</td><td>Report failure. Replacement is a separate explicit workflow.</td></tr><tr><td>Expired / ambiguous transaction</td><td>Retain the journal and reconcile. The runner does not automatically replace it.</td></tr></tbody></table>
-<h2 id="independent-audit">Independent audit</h2><pre><code>const report = await auditSettlement(transcript, receipts, {
+<h2 id="independent-audit">Independent audit</h2><pre data-lang="ts"><code><span class="tk-keyword">const</span> report = <span class="tk-keyword">await</span> <span class="tk-fn">auditSettlement</span>(transcript, receipts, {
   verifier: transport,
 });
-console.log(report.claimedSummary, report.verifiedSummary);
-console.table(report.checks);</code></pre><p>Without a verifier, the report checks recorded claims only. With one, it compares observed status and rejects reused transaction hashes. Independent transfers can settle partially; SwarmKit does not reverse a confirmed payment or guarantee resource delivery.</p></div>
+console.<span class="tk-fn">log</span>(report.claimedSummary, report.verifiedSummary);
+console.<span class="tk-fn">table</span>(report.checks);</code></pre><p>Without a verifier, the report checks recorded claims only. With one, it compares observed status and rejects reused transaction hashes. Independent transfers can settle partially; SwarmKit does not reverse a confirmed payment or guarantee resource delivery.</p></div>
         <nav class="doc__next" aria-label="Next page"><span>Next</span><a href="../reference/">SDK reference →</a></nav>
       </article>
       <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#prepare-from-the-recorded-round">Prepare from the recorded round</a><a href="#buyer-signed-spending-policy">Buyer-signed spending policy</a><a href="#native-testnet-near">Native testnet NEAR</a><a href="#run-the-reference-testnet-validation">Run the reference testnet validation</a><a href="#near-intents">NEAR Intents</a><a href="#recovery-states">Recovery states</a><a href="#independent-audit">Independent audit</a></aside>

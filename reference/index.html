@@ -48,585 +48,585 @@
         <h1>SDK reference</h1>
         <p class="doc__lead">TypeScript contracts generated from the packaged SDK declarations.</p>
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
-        <div class="doc__body"><h2 id="public-entry-point">Public entry point</h2><p>Import public symbols from near-swarmkit. The index below lists the public exports; module declarations provide their full types. Supporting internal types are shown for context and are not separate package entry points.</p><section class="api-module" id="index"><h2 id="index">index</h2><pre><code>export { commitBid, createRound } from "./round.ts";
-export type { Allocation, Bid, Demand, RoundSnapshot, RoundSpec } from "./round.ts";
-export type { RoundCommand, RoundEvent, RoundTranscript } from "./round.ts";
-export { cheapestCapacity, lowestPrice } from "./mechanism.ts";
-export type { EligibleOffer, FulfillmentLine, ProcurementMechanism, SplitAllocation } from "./mechanism.ts";
-export { openStoredRound, replayRound, resumeRound, settlementPlanFromTranscript, submitStoredRoundEvent, } from "./replay.ts";
-export type { RoundStore } from "./replay.ts";
-export { simulateProcurement } from "./simulation.ts";
-export type { BuyerStrategy, SellerStrategy, SimulationOptions } from "./simulation.ts";
-export { createSettlementPlan, summarizeSettlement } from "./settlement.ts";
-export type { Payment, PaymentReceipt, SettlementPlan } from "./settlement.ts";
-export { INTENTS_VERIFIER, nearIntentsExecutionCall, planNearSubaccounts, prepareNearIntentsTransfers, readNearIntentsSalt, signNearIntentsTransfers, } from "./near.ts";
-export type { NearIntentSigningRequest } from "./near.ts";
-export { executeSettlement } from "./execute.ts";
-export type { SignedPayment, SettlementEntry, SettlementJournal, SettlementTransport } from "./execute.ts";
-export { NATIVE_TESTNET_NEAR, nearTestnetTransport } from "./near-testnet.ts";
-export { nearIntentsTransport } from "./near-intents-transport.ts";
-export { auditSettlement } from "./audit.ts";
-export type { ReceiptClaim } from "./audit.ts";
-export { authorizeWithSpendingPolicies, executeWithSpendingPolicies, spendingPolicyMessage } from "./spending-policy.ts";
-export type { SpendingPolicy } from "./spending-policy.ts";
-export { startSimulation, advanceSimulation, explainAllocation } from "./session.ts";
-export type { SimulationSession } from "./session.ts";
-</code></pre></section><section class="api-module" id="audit"><h2 id="audit">audit</h2><pre><code>import type { PaymentReceipt } from "./settlement.ts";
-import type { RoundTranscript } from "./round.ts";
-import type { ProcurementMechanism } from "./mechanism.ts";
-import type { SettlementTransport } from "./execute.ts";
-export type ReceiptClaim = PaymentReceipt &amp; {
-    transactionHash?: string;
+        <div class="doc__body"><h2 id="public-entry-point">Public entry point</h2><p>Import public symbols from near-swarmkit. The index below lists the public exports; module declarations provide their full types. Supporting internal types are shown for context and are not separate package entry points.</p><section class="api-module" id="index"><h2 id="index">index</h2><pre data-lang="ts"><code><span class="tk-keyword">export</span> { commitBid, createRound } <span class="tk-keyword">from</span> <span class="tk-string">"./round.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">Allocation</span>, <span class="tk-type">Bid</span>, <span class="tk-type">Demand</span>, <span class="tk-type">RoundSnapshot</span>, <span class="tk-type">RoundSpec</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./round.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">RoundCommand</span>, <span class="tk-type">RoundEvent</span>, <span class="tk-type">RoundTranscript</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./round.ts"</span>;
+<span class="tk-keyword">export</span> { cheapestCapacity, lowestPrice } <span class="tk-keyword">from</span> <span class="tk-string">"./mechanism.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">EligibleOffer</span>, <span class="tk-type">FulfillmentLine</span>, <span class="tk-type">ProcurementMechanism</span>, <span class="tk-type">SplitAllocation</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./mechanism.ts"</span>;
+<span class="tk-keyword">export</span> { openStoredRound, replayRound, resumeRound, settlementPlanFromTranscript, submitStoredRoundEvent, } <span class="tk-keyword">from</span> <span class="tk-string">"./replay.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">RoundStore</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./replay.ts"</span>;
+<span class="tk-keyword">export</span> { simulateProcurement } <span class="tk-keyword">from</span> <span class="tk-string">"./simulation.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">BuyerStrategy</span>, <span class="tk-type">SellerStrategy</span>, <span class="tk-type">SimulationOptions</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./simulation.ts"</span>;
+<span class="tk-keyword">export</span> { createSettlementPlan, summarizeSettlement } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">Payment</span>, <span class="tk-type">PaymentReceipt</span>, <span class="tk-type">SettlementPlan</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">export</span> { <span class="tk-type">INTENTS_VERIFIER</span>, nearIntentsExecutionCall, planNearSubaccounts, prepareNearIntentsTransfers, readNearIntentsSalt, signNearIntentsTransfers, } <span class="tk-keyword">from</span> <span class="tk-string">"./near.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">NearIntentSigningRequest</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./near.ts"</span>;
+<span class="tk-keyword">export</span> { executeSettlement } <span class="tk-keyword">from</span> <span class="tk-string">"./execute.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">SignedPayment</span>, <span class="tk-type">SettlementEntry</span>, <span class="tk-type">SettlementJournal</span>, <span class="tk-type">SettlementTransport</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./execute.ts"</span>;
+<span class="tk-keyword">export</span> { <span class="tk-type">NATIVE_TESTNET_NEAR</span>, nearTestnetTransport } <span class="tk-keyword">from</span> <span class="tk-string">"./near-testnet.ts"</span>;
+<span class="tk-keyword">export</span> { nearIntentsTransport } <span class="tk-keyword">from</span> <span class="tk-string">"./near-intents-transport.ts"</span>;
+<span class="tk-keyword">export</span> { auditSettlement } <span class="tk-keyword">from</span> <span class="tk-string">"./audit.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">ReceiptClaim</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./audit.ts"</span>;
+<span class="tk-keyword">export</span> { authorizeWithSpendingPolicies, executeWithSpendingPolicies, spendingPolicyMessage } <span class="tk-keyword">from</span> <span class="tk-string">"./spending-policy.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">SpendingPolicy</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./spending-policy.ts"</span>;
+<span class="tk-keyword">export</span> { startSimulation, advanceSimulation, explainAllocation } <span class="tk-keyword">from</span> <span class="tk-string">"./session.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">SimulationSession</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./session.ts"</span>;
+</code></pre></section><section class="api-module" id="audit"><h2 id="audit">audit</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">PaymentReceipt</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">RoundTranscript</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./round.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">ProcurementMechanism</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./mechanism.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">SettlementTransport</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./execute.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">ReceiptClaim</span> = <span class="tk-type">PaymentReceipt</span> &amp; {
+    transactionHash?: <span class="tk-type">string</span>;
 };
-export declare function auditSettlement(transcript: RoundTranscript, claims: readonly ReceiptClaim[], options?: {
-    mechanism?: ProcurementMechanism;
-    verifier?: Pick&lt;SettlementTransport, "asset" | "inspect"&gt;;
-}): Promise&lt;{
-    plan: import("./settlement.ts").SettlementPlan;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">auditSettlement</span>(transcript: <span class="tk-type">RoundTranscript</span>, claims: <span class="tk-keyword">readonly</span> <span class="tk-type">ReceiptClaim</span>[], options?: {
+    mechanism?: <span class="tk-type">ProcurementMechanism</span>;
+    verifier?: <span class="tk-type">Pick</span>&lt;<span class="tk-type">SettlementTransport</span>, <span class="tk-string">"asset"</span> | <span class="tk-string">"inspect"</span>&gt;;
+}): <span class="tk-type">Promise</span>&lt;{
+    plan: <span class="tk-keyword">import</span>(<span class="tk-string">"./settlement.ts"</span>).<span class="tk-type">SettlementPlan</span>;
     claimedSummary: {
-        pending: string;
-        confirmed: string;
-        failed: string;
-        paid: boolean;
+        pending: <span class="tk-type">string</span>;
+        confirmed: <span class="tk-type">string</span>;
+        failed: <span class="tk-type">string</span>;
+        paid: <span class="tk-type">boolean</span>;
     };
     verifiedSummary: {
-        pending: string;
-        confirmed: string;
-        failed: string;
-        paid: boolean;
-    } | undefined;
+        pending: <span class="tk-type">string</span>;
+        confirmed: <span class="tk-type">string</span>;
+        failed: <span class="tk-type">string</span>;
+        paid: <span class="tk-type">boolean</span>;
+    } | <span class="tk-literal">undefined</span>;
     checks: {
-        paymentId: string;
-        transactionHash: string | undefined;
-        claimed: "failed" | "pending" | "confirmed";
-        observed: "failed" | "pending" | "confirmed" | undefined;
-        matches: boolean | undefined;
+        paymentId: <span class="tk-type">string</span>;
+        transactionHash: <span class="tk-type">string</span> | <span class="tk-literal">undefined</span>;
+        claimed: <span class="tk-string">"failed"</span> | <span class="tk-string">"pending"</span> | <span class="tk-string">"confirmed"</span>;
+        observed: <span class="tk-string">"failed"</span> | <span class="tk-string">"pending"</span> | <span class="tk-string">"confirmed"</span> | <span class="tk-literal">undefined</span>;
+        matches: <span class="tk-type">boolean</span> | <span class="tk-literal">undefined</span>;
     }[];
 }&gt;;
-</code></pre></section><section class="api-module" id="execute"><h2 id="execute">execute</h2><pre><code>import type { Payment, PaymentReceipt, SettlementPlan } from "./settlement.ts";
-export type SignedPayment = {
-    hash: string;
-    bytes: string;
+</code></pre></section><section class="api-module" id="execute"><h2 id="execute">execute</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Payment</span>, <span class="tk-type">PaymentReceipt</span>, <span class="tk-type">SettlementPlan</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SignedPayment</span> = {
+    hash: <span class="tk-type">string</span>;
+    bytes: <span class="tk-type">string</span>;
 };
-export type SettlementEntry = {
-    payment: Payment;
-    signed: SignedPayment;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SettlementEntry</span> = {
+    payment: <span class="tk-type">Payment</span>;
+    signed: <span class="tk-type">SignedPayment</span>;
 };
-export type SettlementJournal = {
-    reserve(scope: string, candidate: SettlementEntry): Promise&lt;SettlementEntry&gt;;
-    read(scope: string): Promise&lt;SettlementEntry | undefined&gt;;
-    bindPlan?(scope: string, fingerprint: string): Promise&lt;boolean&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SettlementJournal</span> = {
+    <span class="tk-fn">reserve</span>(scope: <span class="tk-type">string</span>, candidate: <span class="tk-type">SettlementEntry</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">SettlementEntry</span>&gt;;
+    <span class="tk-fn">read</span>(scope: <span class="tk-type">string</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">SettlementEntry</span> | <span class="tk-literal">undefined</span>&gt;;
+    bindPlan?(scope: <span class="tk-type">string</span>, fingerprint: <span class="tk-type">string</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">boolean</span>&gt;;
 };
-export type SettlementTransport = {
-    scope: string;
-    asset: string;
-    prepare(payment: Readonly&lt;Payment&gt;): Promise&lt;SignedPayment&gt;;
-    broadcast(signed: Readonly&lt;SignedPayment&gt;): Promise&lt;void&gt;;
-    inspect(payment: Readonly&lt;Payment&gt;, hash: string): Promise&lt;PaymentReceipt["status"]&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SettlementTransport</span> = {
+    scope: <span class="tk-type">string</span>;
+    asset: <span class="tk-type">string</span>;
+    <span class="tk-fn">prepare</span>(payment: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">Payment</span>&gt;): <span class="tk-type">Promise</span>&lt;<span class="tk-type">SignedPayment</span>&gt;;
+    <span class="tk-fn">broadcast</span>(signed: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">SignedPayment</span>&gt;): <span class="tk-type">Promise</span>&lt;<span class="tk-keyword">void</span>&gt;;
+    <span class="tk-fn">inspect</span>(payment: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">Payment</span>&gt;, hash: <span class="tk-type">string</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">PaymentReceipt</span>[<span class="tk-string">"status"</span>]&gt;;
 };
-export declare function executeSettlement(input: SettlementPlan, options: {
-    transport: SettlementTransport;
-    journal: SettlementJournal;
-    authorize: (payment: Readonly&lt;Payment&gt;) =&gt; boolean | Promise&lt;boolean&gt;;
-}): Promise&lt;{
-    receipts: (PaymentReceipt &amp; {
-        transactionHash?: string;
-        broadcastUncertain?: true;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">executeSettlement</span>(input: <span class="tk-type">SettlementPlan</span>, options: {
+    transport: <span class="tk-type">SettlementTransport</span>;
+    journal: <span class="tk-type">SettlementJournal</span>;
+    authorize: (payment: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">Payment</span>&gt;) =&gt; <span class="tk-type">boolean</span> | <span class="tk-type">Promise</span>&lt;<span class="tk-type">boolean</span>&gt;;
+}): <span class="tk-type">Promise</span>&lt;{
+    receipts: (<span class="tk-type">PaymentReceipt</span> &amp; {
+        transactionHash?: <span class="tk-type">string</span>;
+        broadcastUncertain?: <span class="tk-literal">true</span>;
     })[];
     summary: {
-        pending: string;
-        confirmed: string;
-        failed: string;
-        paid: boolean;
+        pending: <span class="tk-type">string</span>;
+        confirmed: <span class="tk-type">string</span>;
+        failed: <span class="tk-type">string</span>;
+        paid: <span class="tk-type">boolean</span>;
     };
 }&gt;;
-</code></pre></section><section class="api-module" id="mechanism"><h2 id="mechanism">mechanism</h2><pre><code>export type EligibleOffer = Readonly&lt;{
-    sellerId: string;
-    unitPrice: string;
-    capacity: string;
+</code></pre></section><section class="api-module" id="mechanism"><h2 id="mechanism">mechanism</h2><pre data-lang="ts"><code><span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">EligibleOffer</span> = <span class="tk-type">Readonly</span>&lt;{
+    sellerId: <span class="tk-type">string</span>;
+    unitPrice: <span class="tk-type">string</span>;
+    capacity: <span class="tk-type">string</span>;
 }&gt;;
-export type FulfillmentLine = {
-    buyerId: string;
-    sellerId: string;
-    quantity: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">FulfillmentLine</span> = {
+    buyerId: <span class="tk-type">string</span>;
+    sellerId: <span class="tk-type">string</span>;
+    quantity: <span class="tk-type">string</span>;
 };
-export type SplitAllocation = {
-    lines: (FulfillmentLine &amp; {
-        unitPrice: string;
-        amount: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SplitAllocation</span> = {
+    lines: (<span class="tk-type">FulfillmentLine</span> &amp; {
+        unitPrice: <span class="tk-type">string</span>;
+        amount: <span class="tk-type">string</span>;
     })[];
-    total: string;
+    total: <span class="tk-type">string</span>;
 };
-type Buyer = Readonly&lt;{
-    buyerId: string;
-    quantity: string;
-    budget: string;
+<span class="tk-keyword">type</span> <span class="tk-type">Buyer</span> = <span class="tk-type">Readonly</span>&lt;{
+    buyerId: <span class="tk-type">string</span>;
+    quantity: <span class="tk-type">string</span>;
+    budget: <span class="tk-type">string</span>;
 }&gt;;
-export type ProcurementMechanism = Readonly&lt;{
-    id: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">ProcurementMechanism</span> = <span class="tk-type">Readonly</span>&lt;{
+    id: <span class="tk-type">string</span>;
 } &amp; ({
-    selectWinner: (offers: readonly EligibleOffer[]) =&gt; string | null;
+    selectWinner: (offers: <span class="tk-keyword">readonly</span> <span class="tk-type">EligibleOffer</span>[]) =&gt; <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
 } | {
-    allocate: (buyers: readonly Buyer[], offers: readonly EligibleOffer[]) =&gt; readonly FulfillmentLine[] | null;
+    allocate: (buyers: <span class="tk-keyword">readonly</span> <span class="tk-type">Buyer</span>[], offers: <span class="tk-keyword">readonly</span> <span class="tk-type">EligibleOffer</span>[]) =&gt; <span class="tk-keyword">readonly</span> <span class="tk-type">FulfillmentLine</span>[] | <span class="tk-literal">null</span>;
 })&gt;;
-export declare const cheapestCapacity: ProcurementMechanism;
-export declare function validateSplit(buyers: readonly Buyer[], offers: readonly EligibleOffer[], lines: readonly FulfillmentLine[]): SplitAllocation;
-export declare const lowestPrice: ProcurementMechanism;
-export {};
-</code></pre></section><section class="api-module" id="near-intents-transport"><h2 id="near-intents-transport">near-intents-transport</h2><pre><code>import type { SettlementTransport, SignedPayment } from "./execute.ts";
-import { nearIntentsExecutionCall, signNearIntentsTransfers } from "./near.ts";
-type SigningCallback = Parameters&lt;typeof signNearIntentsTransfers&gt;[1];
-type ExecutionCall = ReturnType&lt;typeof nearIntentsExecutionCall&gt;;
-export declare function nearIntentsTransport(options: {
-    asset: string;
-    relayerId: string;
-    signIntent: SigningCallback;
-    signTransaction: (call: ExecutionCall) =&gt; Promise&lt;SignedPayment&gt;;
-    rpcUrl?: string;
-}): SettlementTransport;
-export {};
-</code></pre></section><section class="api-module" id="near-testnet"><h2 id="near-testnet">near-testnet</h2><pre><code>import type { SettlementTransport, SignedPayment } from "./execute.ts";
-import type { Payment } from "./settlement.ts";
-export declare const NATIVE_TESTNET_NEAR = "near:testnet:native";
-export declare const nearTransactionHash: RegExp;
-export declare function nearTestnetTransport(sign: (payment: Readonly&lt;Payment&gt;) =&gt; Promise&lt;SignedPayment&gt;, rpcUrl?: string): SettlementTransport;
-</code></pre></section><section class="api-module" id="near"><h2 id="near">near</h2><pre><code>import type { Payment, SettlementPlan } from "./settlement.ts";
-export declare const INTENTS_VERIFIER = "intents.near";
-export declare function planNearSubaccounts(parentId: string, agents: readonly {
-    label: string;
-    publicKey: string;
-    fundingYoctoNear: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">const</span> cheapestCapacity: <span class="tk-type">ProcurementMechanism</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">validateSplit</span>(buyers: <span class="tk-keyword">readonly</span> <span class="tk-type">Buyer</span>[], offers: <span class="tk-keyword">readonly</span> <span class="tk-type">EligibleOffer</span>[], lines: <span class="tk-keyword">readonly</span> <span class="tk-type">FulfillmentLine</span>[]): <span class="tk-type">SplitAllocation</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">const</span> lowestPrice: <span class="tk-type">ProcurementMechanism</span>;
+<span class="tk-keyword">export</span> {};
+</code></pre></section><section class="api-module" id="near-intents-transport"><h2 id="near-intents-transport">near-intents-transport</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">SettlementTransport</span>, <span class="tk-type">SignedPayment</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./execute.ts"</span>;
+<span class="tk-keyword">import</span> { nearIntentsExecutionCall, signNearIntentsTransfers } <span class="tk-keyword">from</span> <span class="tk-string">"./near.ts"</span>;
+<span class="tk-keyword">type</span> <span class="tk-type">SigningCallback</span> = <span class="tk-type">Parameters</span>&lt;<span class="tk-keyword">typeof</span> signNearIntentsTransfers&gt;[<span class="tk-number">1</span>];
+<span class="tk-keyword">type</span> <span class="tk-type">ExecutionCall</span> = <span class="tk-type">ReturnType</span>&lt;<span class="tk-keyword">typeof</span> nearIntentsExecutionCall&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">nearIntentsTransport</span>(options: {
+    asset: <span class="tk-type">string</span>;
+    relayerId: <span class="tk-type">string</span>;
+    signIntent: <span class="tk-type">SigningCallback</span>;
+    signTransaction: (call: <span class="tk-type">ExecutionCall</span>) =&gt; <span class="tk-type">Promise</span>&lt;<span class="tk-type">SignedPayment</span>&gt;;
+    rpcUrl?: <span class="tk-type">string</span>;
+}): <span class="tk-type">SettlementTransport</span>;
+<span class="tk-keyword">export</span> {};
+</code></pre></section><section class="api-module" id="near-testnet"><h2 id="near-testnet">near-testnet</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">SettlementTransport</span>, <span class="tk-type">SignedPayment</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./execute.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Payment</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">const</span> <span class="tk-type">NATIVE_TESTNET_NEAR</span> = <span class="tk-string">"near:testnet:native"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">const</span> nearTransactionHash: <span class="tk-type">RegExp</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">nearTestnetTransport</span>(sign: (payment: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">Payment</span>&gt;) =&gt; <span class="tk-type">Promise</span>&lt;<span class="tk-type">SignedPayment</span>&gt;, rpcUrl?: <span class="tk-type">string</span>): <span class="tk-type">SettlementTransport</span>;
+</code></pre></section><section class="api-module" id="near"><h2 id="near">near</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Payment</span>, <span class="tk-type">SettlementPlan</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">const</span> <span class="tk-type">INTENTS_VERIFIER</span> = <span class="tk-string">"intents.near"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">planNearSubaccounts</span>(parentId: <span class="tk-type">string</span>, agents: <span class="tk-keyword">readonly</span> {
+    label: <span class="tk-type">string</span>;
+    publicKey: <span class="tk-type">string</span>;
+    fundingYoctoNear: <span class="tk-type">string</span>;
 }[]): {
-    signerId: string;
-    receiverId: string;
-    actions: readonly [{
-        readonly type: "CreateAccount";
+    signerId: <span class="tk-type">string</span>;
+    receiverId: <span class="tk-type">string</span>;
+    actions: <span class="tk-keyword">readonly</span> [{
+        <span class="tk-keyword">readonly</span> <span class="tk-keyword">type</span>: <span class="tk-string">"CreateAccount"</span>;
     }, {
-        readonly type: "Transfer";
-        readonly deposit: string;
+        <span class="tk-keyword">readonly</span> <span class="tk-keyword">type</span>: <span class="tk-string">"Transfer"</span>;
+        <span class="tk-keyword">readonly</span> deposit: <span class="tk-type">string</span>;
     }, {
-        readonly type: "AddFullAccessKey";
-        readonly publicKey: string;
+        <span class="tk-keyword">readonly</span> <span class="tk-keyword">type</span>: <span class="tk-string">"AddFullAccessKey"</span>;
+        <span class="tk-keyword">readonly</span> publicKey: <span class="tk-type">string</span>;
     }];
 }[];
-export type NearIntentSigningRequest = Readonly&lt;{
-    payment: Readonly&lt;Payment&gt;;
-    recipient: typeof INTENTS_VERIFIER;
-    message: string;
-    nonce: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">NearIntentSigningRequest</span> = <span class="tk-type">Readonly</span>&lt;{
+    payment: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">Payment</span>&gt;;
+    recipient: <span class="tk-keyword">typeof</span> <span class="tk-type">INTENTS_VERIFIER</span>;
+    message: <span class="tk-type">string</span>;
+    nonce: <span class="tk-type">string</span>;
 }&gt;;
-type IntentSignature = {
-    publicKey: string;
-    signature: string;
+<span class="tk-keyword">type</span> <span class="tk-type">IntentSignature</span> = {
+    publicKey: <span class="tk-type">string</span>;
+    signature: <span class="tk-type">string</span>;
 };
-type SignedIntent = {
-    standard: "nep413";
-    payload: Pick&lt;NearIntentSigningRequest, "recipient" | "message" | "nonce"&gt;;
-    public_key: string;
-    signature: string;
+<span class="tk-keyword">type</span> <span class="tk-type">SignedIntent</span> = {
+    standard: <span class="tk-string">"nep413"</span>;
+    payload: <span class="tk-type">Pick</span>&lt;<span class="tk-type">NearIntentSigningRequest</span>, <span class="tk-string">"recipient"</span> | <span class="tk-string">"message"</span> | <span class="tk-string">"nonce"</span>&gt;;
+    public_key: <span class="tk-type">string</span>;
+    signature: <span class="tk-type">string</span>;
 };
-export declare function prepareNearIntentsTransfers(plan: SettlementPlan, options: {
-    salt: string;
-    deadline: Date;
-}): NearIntentSigningRequest[];
-export declare function signNearIntentsTransfers(requests: readonly NearIntentSigningRequest[], sign: (request: NearIntentSigningRequest) =&gt; Promise&lt;IntentSignature&gt;): Promise&lt;{
-    signed: SignedIntent[];
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">prepareNearIntentsTransfers</span>(plan: <span class="tk-type">SettlementPlan</span>, options: {
+    salt: <span class="tk-type">string</span>;
+    deadline: <span class="tk-type">Date</span>;
+}): <span class="tk-type">NearIntentSigningRequest</span>[];
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">signNearIntentsTransfers</span>(requests: <span class="tk-keyword">readonly</span> <span class="tk-type">NearIntentSigningRequest</span>[], sign: (request: <span class="tk-type">NearIntentSigningRequest</span>) =&gt; <span class="tk-type">Promise</span>&lt;<span class="tk-type">IntentSignature</span>&gt;): <span class="tk-type">Promise</span>&lt;{
+    signed: <span class="tk-type">SignedIntent</span>[];
 }&gt;;
-export declare function nearIntentsExecutionCall(args: Awaited&lt;ReturnType&lt;typeof signNearIntentsTransfers&gt;&gt;): {
-    readonly network: "mainnet";
-    readonly receiverId: "intents.near";
-    readonly methodName: "execute_intents";
-    readonly args: {
-        signed: SignedIntent[];
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">nearIntentsExecutionCall</span>(args: <span class="tk-type">Awaited</span>&lt;<span class="tk-type">ReturnType</span>&lt;<span class="tk-keyword">typeof</span> signNearIntentsTransfers&gt;&gt;): {
+    <span class="tk-keyword">readonly</span> network: <span class="tk-string">"mainnet"</span>;
+    <span class="tk-keyword">readonly</span> receiverId: <span class="tk-string">"intents.near"</span>;
+    <span class="tk-keyword">readonly</span> methodName: <span class="tk-string">"execute_intents"</span>;
+    <span class="tk-keyword">readonly</span> args: {
+        signed: <span class="tk-type">SignedIntent</span>[];
     };
-    readonly attachedDepositYoctoNear: "0";
+    <span class="tk-keyword">readonly</span> attachedDepositYoctoNear: <span class="tk-string">"0"</span>;
 };
-export declare function readNearIntentsSalt(rpcUrl?: string): Promise&lt;string&gt;;
-export {};
-</code></pre></section><section class="api-module" id="replay"><h2 id="replay">replay</h2><pre><code>import type { RoundCommand, RoundTranscript } from "./round.ts";
-import type { ProcurementMechanism } from "./mechanism.ts";
-export declare function resumeRound(transcript: RoundTranscript, clock?: () =&gt; number, mechanism?: ProcurementMechanism): Promise&lt;{
-    submitDemand: (buyerId: string, request: import("./types.ts").Demand | null) =&gt; boolean;
-    submitCommitment: (sellerId: string, hash: string) =&gt; boolean;
-    revealBid: (sellerId: string, bid: import("./types.ts").Bid) =&gt; Promise&lt;boolean&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">readNearIntentsSalt</span>(rpcUrl?: <span class="tk-type">string</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">string</span>&gt;;
+<span class="tk-keyword">export</span> {};
+</code></pre></section><section class="api-module" id="replay"><h2 id="replay">replay</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">RoundCommand</span>, <span class="tk-type">RoundTranscript</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./round.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">ProcurementMechanism</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./mechanism.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">resumeRound</span>(transcript: <span class="tk-type">RoundTranscript</span>, clock?: () =&gt; <span class="tk-type">number</span>, mechanism?: <span class="tk-type">ProcurementMechanism</span>): <span class="tk-type">Promise</span>&lt;{
+    submitDemand: (buyerId: <span class="tk-type">string</span>, request: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Demand</span> | <span class="tk-literal">null</span>) =&gt; <span class="tk-type">boolean</span>;
+    submitCommitment: (sellerId: <span class="tk-type">string</span>, hash: <span class="tk-type">string</span>) =&gt; <span class="tk-type">boolean</span>;
+    revealBid: (sellerId: <span class="tk-type">string</span>, bid: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Bid</span>) =&gt; <span class="tk-type">Promise</span>&lt;<span class="tk-type">boolean</span>&gt;;
     snapshot: () =&gt; {
-        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
-        spec: import("./types.ts").RoundSpec;
-        phase: string;
+        splitAllocation?: <span class="tk-keyword">import</span>(<span class="tk-string">"./mechanism.ts"</span>).<span class="tk-type">SplitAllocation</span> | <span class="tk-literal">null</span> | <span class="tk-literal">undefined</span>;
+        spec: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">RoundSpec</span>;
+        phase: <span class="tk-type">string</span>;
         buyers: {
-            quantity: string;
-            budget: string;
-            buyerId: string;
+            quantity: <span class="tk-type">string</span>;
+            budget: <span class="tk-type">string</span>;
+            buyerId: <span class="tk-type">string</span>;
         }[];
-        quantity: string;
+        quantity: <span class="tk-type">string</span>;
         bids: {
-            sellerId: string;
-            commitment: string;
+            sellerId: <span class="tk-type">string</span>;
+            commitment: <span class="tk-type">string</span>;
             reveal: {
-                capacity: string;
-                unitPrice: string;
-                salt: string;
-            } | null;
-            rejection: string | null;
+                capacity: <span class="tk-type">string</span>;
+                unitPrice: <span class="tk-type">string</span>;
+                salt: <span class="tk-type">string</span>;
+            } | <span class="tk-literal">null</span>;
+            rejection: <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
         }[];
-        allocation: import("./types.ts").Allocation | null;
+        allocation: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Allocation</span> | <span class="tk-literal">null</span>;
     };
-    transcript: () =&gt; RoundTranscript;
+    transcript: () =&gt; <span class="tk-type">RoundTranscript</span>;
 }&gt;;
-export declare function replayRound(transcript: RoundTranscript, mechanism?: ProcurementMechanism): Promise&lt;{
-    splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
-    spec: import("./types.ts").RoundSpec;
-    phase: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">replayRound</span>(transcript: <span class="tk-type">RoundTranscript</span>, mechanism?: <span class="tk-type">ProcurementMechanism</span>): <span class="tk-type">Promise</span>&lt;{
+    splitAllocation?: <span class="tk-keyword">import</span>(<span class="tk-string">"./mechanism.ts"</span>).<span class="tk-type">SplitAllocation</span> | <span class="tk-literal">null</span> | <span class="tk-literal">undefined</span>;
+    spec: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">RoundSpec</span>;
+    phase: <span class="tk-type">string</span>;
     buyers: {
-        quantity: string;
-        budget: string;
-        buyerId: string;
+        quantity: <span class="tk-type">string</span>;
+        budget: <span class="tk-type">string</span>;
+        buyerId: <span class="tk-type">string</span>;
     }[];
-    quantity: string;
+    quantity: <span class="tk-type">string</span>;
     bids: {
-        sellerId: string;
-        commitment: string;
+        sellerId: <span class="tk-type">string</span>;
+        commitment: <span class="tk-type">string</span>;
         reveal: {
-            capacity: string;
-            unitPrice: string;
-            salt: string;
-        } | null;
-        rejection: string | null;
+            capacity: <span class="tk-type">string</span>;
+            unitPrice: <span class="tk-type">string</span>;
+            salt: <span class="tk-type">string</span>;
+        } | <span class="tk-literal">null</span>;
+        rejection: <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
     }[];
-    allocation: import("./types.ts").Allocation | null;
+    allocation: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Allocation</span> | <span class="tk-literal">null</span>;
 }&gt;;
-export declare function settlementPlanFromTranscript(transcript: RoundTranscript, mechanism?: ProcurementMechanism): Promise&lt;import("./settlement.ts").SettlementPlan&gt;;
-export type RoundStore = {
-    read(roundId: string): Promise&lt;RoundTranscript | undefined&gt;;
-    compareAndSet(next: RoundTranscript, expectedRevision: number | null): Promise&lt;boolean&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">settlementPlanFromTranscript</span>(transcript: <span class="tk-type">RoundTranscript</span>, mechanism?: <span class="tk-type">ProcurementMechanism</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-keyword">import</span>(<span class="tk-string">"./settlement.ts"</span>).<span class="tk-type">SettlementPlan</span>&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">RoundStore</span> = {
+    <span class="tk-fn">read</span>(roundId: <span class="tk-type">string</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">RoundTranscript</span> | <span class="tk-literal">undefined</span>&gt;;
+    <span class="tk-fn">compareAndSet</span>(next: <span class="tk-type">RoundTranscript</span>, expectedRevision: <span class="tk-type">number</span> | <span class="tk-literal">null</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">boolean</span>&gt;;
 };
-export declare function openStoredRound(spec: RoundTranscript["spec"], store: RoundStore, clock?: () =&gt; number, mechanism?: ProcurementMechanism): Promise&lt;RoundTranscript&gt;;
-export declare function submitStoredRoundEvent(roundId: string, event: RoundCommand, store: RoundStore, clock?: () =&gt; number, mechanism?: ProcurementMechanism): Promise&lt;{
-    readonly status: "rejected";
-    readonly transcript?: undefined;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">openStoredRound</span>(spec: <span class="tk-type">RoundTranscript</span>[<span class="tk-string">"spec"</span>], store: <span class="tk-type">RoundStore</span>, clock?: () =&gt; <span class="tk-type">number</span>, mechanism?: <span class="tk-type">ProcurementMechanism</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">RoundTranscript</span>&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">submitStoredRoundEvent</span>(roundId: <span class="tk-type">string</span>, event: <span class="tk-type">RoundCommand</span>, store: <span class="tk-type">RoundStore</span>, clock?: () =&gt; <span class="tk-type">number</span>, mechanism?: <span class="tk-type">ProcurementMechanism</span>): <span class="tk-type">Promise</span>&lt;{
+    <span class="tk-keyword">readonly</span> status: <span class="tk-string">"rejected"</span>;
+    <span class="tk-keyword">readonly</span> transcript?: <span class="tk-literal">undefined</span>;
 } | {
-    readonly status: "conflict";
-    readonly transcript?: undefined;
+    <span class="tk-keyword">readonly</span> status: <span class="tk-string">"conflict"</span>;
+    <span class="tk-keyword">readonly</span> transcript?: <span class="tk-literal">undefined</span>;
 } | {
-    readonly status: "accepted";
-    readonly transcript: RoundTranscript;
+    <span class="tk-keyword">readonly</span> status: <span class="tk-string">"accepted"</span>;
+    <span class="tk-keyword">readonly</span> transcript: <span class="tk-type">RoundTranscript</span>;
 }&gt;;
-</code></pre></section><section class="api-module" id="round"><h2 id="round">round</h2><pre><code>import type { Allocation, Bid, Demand, RoundSpec } from "./types.ts";
-import type { ProcurementMechanism, SplitAllocation } from "./mechanism.ts";
-export type { Allocation, Bid, Demand, RoundSpec } from "./types.ts";
-export type RoundCommand = {
-    type: "demand";
-    buyerId: string;
-    request: Demand | null;
+</code></pre></section><section class="api-module" id="round"><h2 id="round">round</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Allocation</span>, <span class="tk-type">Bid</span>, <span class="tk-type">Demand</span>, <span class="tk-type">RoundSpec</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./types.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">ProcurementMechanism</span>, <span class="tk-type">SplitAllocation</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./mechanism.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> { <span class="tk-type">Allocation</span>, <span class="tk-type">Bid</span>, <span class="tk-type">Demand</span>, <span class="tk-type">RoundSpec</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./types.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">RoundCommand</span> = {
+    <span class="tk-keyword">type</span>: <span class="tk-string">"demand"</span>;
+    buyerId: <span class="tk-type">string</span>;
+    request: <span class="tk-type">Demand</span> | <span class="tk-literal">null</span>;
 } | {
-    type: "commitment";
-    sellerId: string;
-    hash: string;
+    <span class="tk-keyword">type</span>: <span class="tk-string">"commitment"</span>;
+    sellerId: <span class="tk-type">string</span>;
+    hash: <span class="tk-type">string</span>;
 } | {
-    type: "reveal";
-    sellerId: string;
-    bid: Bid;
+    <span class="tk-keyword">type</span>: <span class="tk-string">"reveal"</span>;
+    sellerId: <span class="tk-type">string</span>;
+    bid: <span class="tk-type">Bid</span>;
 };
-export type RoundEvent = RoundCommand &amp; {
-    at: number;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">RoundEvent</span> = <span class="tk-type">RoundCommand</span> &amp; {
+    at: <span class="tk-type">number</span>;
 };
-export type RoundTranscript = {
-    version: 1;
-    spec: RoundSpec;
-    events: readonly RoundEvent[];
-    observedAt: number;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">RoundTranscript</span> = {
+    version: <span class="tk-number">1</span>;
+    spec: <span class="tk-type">RoundSpec</span>;
+    events: <span class="tk-keyword">readonly</span> <span class="tk-type">RoundEvent</span>[];
+    observedAt: <span class="tk-type">number</span>;
 };
-export declare function commitBid(roundId: string, sellerId: string, bid: Bid): Promise&lt;string&gt;;
-export declare function createRound(input: RoundSpec, clock?: () =&gt; number, mechanism?: ProcurementMechanism): {
-    submitDemand: (buyerId: string, request: Demand | null) =&gt; boolean;
-    submitCommitment: (sellerId: string, hash: string) =&gt; boolean;
-    revealBid: (sellerId: string, bid: Bid) =&gt; Promise&lt;boolean&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">commitBid</span>(roundId: <span class="tk-type">string</span>, sellerId: <span class="tk-type">string</span>, bid: <span class="tk-type">Bid</span>): <span class="tk-type">Promise</span>&lt;<span class="tk-type">string</span>&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">createRound</span>(input: <span class="tk-type">RoundSpec</span>, clock?: () =&gt; <span class="tk-type">number</span>, mechanism?: <span class="tk-type">ProcurementMechanism</span>): {
+    submitDemand: (buyerId: <span class="tk-type">string</span>, request: <span class="tk-type">Demand</span> | <span class="tk-literal">null</span>) =&gt; <span class="tk-type">boolean</span>;
+    submitCommitment: (sellerId: <span class="tk-type">string</span>, hash: <span class="tk-type">string</span>) =&gt; <span class="tk-type">boolean</span>;
+    revealBid: (sellerId: <span class="tk-type">string</span>, bid: <span class="tk-type">Bid</span>) =&gt; <span class="tk-type">Promise</span>&lt;<span class="tk-type">boolean</span>&gt;;
     snapshot: () =&gt; {
-        splitAllocation?: SplitAllocation | null | undefined;
-        spec: RoundSpec;
-        phase: string;
+        splitAllocation?: <span class="tk-type">SplitAllocation</span> | <span class="tk-literal">null</span> | <span class="tk-literal">undefined</span>;
+        spec: <span class="tk-type">RoundSpec</span>;
+        phase: <span class="tk-type">string</span>;
         buyers: {
-            quantity: string;
-            budget: string;
-            buyerId: string;
+            quantity: <span class="tk-type">string</span>;
+            budget: <span class="tk-type">string</span>;
+            buyerId: <span class="tk-type">string</span>;
         }[];
-        quantity: string;
+        quantity: <span class="tk-type">string</span>;
         bids: {
-            sellerId: string;
-            commitment: string;
+            sellerId: <span class="tk-type">string</span>;
+            commitment: <span class="tk-type">string</span>;
             reveal: {
-                capacity: string;
-                unitPrice: string;
-                salt: string;
-            } | null;
-            rejection: string | null;
+                capacity: <span class="tk-type">string</span>;
+                unitPrice: <span class="tk-type">string</span>;
+                salt: <span class="tk-type">string</span>;
+            } | <span class="tk-literal">null</span>;
+            rejection: <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
         }[];
-        allocation: Allocation | null;
+        allocation: <span class="tk-type">Allocation</span> | <span class="tk-literal">null</span>;
     };
-    transcript: () =&gt; RoundTranscript;
+    transcript: () =&gt; <span class="tk-type">RoundTranscript</span>;
 };
-export type RoundSnapshot = ReturnType&lt;ReturnType&lt;typeof createRound&gt;["snapshot"]&gt;;
-</code></pre></section><section class="api-module" id="session"><h2 id="session">session</h2><pre><code>import type { RoundSnapshot, RoundTranscript } from "./round.ts";
-import type { Bid } from "./types.ts";
-import type { SimulationOptions } from "./simulation.ts";
-/** Private simulation checkpoint. Contains unrevealed offers; never publish it. */
-export type SimulationSession = {
-    version: 1;
-    stage: "ready" | "demand" | "commit" | "reveal" | "closed";
-    randomState: number;
-    transcript: RoundTranscript;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">RoundSnapshot</span> = <span class="tk-type">ReturnType</span>&lt;<span class="tk-type">ReturnType</span>&lt;<span class="tk-keyword">typeof</span> createRound&gt;[<span class="tk-string">"snapshot"</span>]&gt;;
+</code></pre></section><section class="api-module" id="session"><h2 id="session">session</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">RoundSnapshot</span>, <span class="tk-type">RoundTranscript</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./round.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Bid</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./types.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">SimulationOptions</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./simulation.ts"</span>;
+<span class="tk-comment">/** Private simulation checkpoint. Contains unrevealed offers; never publish it. */</span>
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SimulationSession</span> = {
+    version: <span class="tk-number">1</span>;
+    stage: <span class="tk-string">"ready"</span> | <span class="tk-string">"demand"</span> | <span class="tk-string">"commit"</span> | <span class="tk-string">"reveal"</span> | <span class="tk-string">"closed"</span>;
+    randomState: <span class="tk-type">number</span>;
+    transcript: <span class="tk-type">RoundTranscript</span>;
     sealedOffers: {
-        sellerId: string;
-        bid: Bid;
-        reveal: boolean;
+        sellerId: <span class="tk-type">string</span>;
+        bid: <span class="tk-type">Bid</span>;
+        reveal: <span class="tk-type">boolean</span>;
     }[];
 };
-/** Start an empty simulation. No strategies execute until advanceSimulation is called. */
-export declare function startSimulation(options: Pick&lt;SimulationOptions, "spec" | "seed" | "buyers" | "sellers" | "mechanism"&gt;): SimulationSession;
-/** Advance exactly one stage. Persist the returned checkpoint before calling again.
+<span class="tk-comment">/** Start an empty simulation. No strategies execute until advanceSimulation is called. */</span>
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">startSimulation</span>(options: <span class="tk-type">Pick</span>&lt;<span class="tk-type">SimulationOptions</span>, <span class="tk-string">"spec"</span> | <span class="tk-string">"seed"</span> | <span class="tk-string">"buyers"</span> | <span class="tk-string">"sellers"</span> | <span class="tk-string">"mechanism"</span>&gt;): <span class="tk-type">SimulationSession</span>;
+<span class="tk-comment">/** Advance exactly one stage. Persist the returned checkpoint before calling again.
  * Strategies must be side-effect-free: an uncommitted attempt may be retried.
  * The supplied callbacks may be asynchronous; clocks are logical simulation time.
- */
-export declare function advanceSimulation(input: SimulationSession, strategies: Pick&lt;SimulationOptions, "buyers" | "sellers" | "mechanism"&gt;): Promise&lt;SimulationSession&gt;;
-/** Explain the recorded outcome without claiming the heuristic proves infeasibility. */
-export declare function explainAllocation(snapshot: RoundSnapshot): {
-    outcome: "allocated" | "no-sale";
-    reason: string;
+ */</span>
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">advanceSimulation</span>(input: <span class="tk-type">SimulationSession</span>, strategies: <span class="tk-type">Pick</span>&lt;<span class="tk-type">SimulationOptions</span>, <span class="tk-string">"buyers"</span> | <span class="tk-string">"sellers"</span> | <span class="tk-string">"mechanism"</span>&gt;): <span class="tk-type">Promise</span>&lt;<span class="tk-type">SimulationSession</span>&gt;;
+<span class="tk-comment">/** Explain the recorded outcome without claiming the heuristic proves infeasibility. */</span>
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">explainAllocation</span>(snapshot: <span class="tk-type">RoundSnapshot</span>): {
+    outcome: <span class="tk-string">"allocated"</span> | <span class="tk-string">"no-sale"</span>;
+    reason: <span class="tk-type">string</span>;
     buyers: {
-        spent: string;
-        remainingBudget: string;
-        lines: (import("./mechanism.ts").FulfillmentLine &amp; {
-            unitPrice: string;
-            amount: string;
+        spent: <span class="tk-type">string</span>;
+        remainingBudget: <span class="tk-type">string</span>;
+        lines: (<span class="tk-keyword">import</span>(<span class="tk-string">"./mechanism.ts"</span>).<span class="tk-type">FulfillmentLine</span> &amp; {
+            unitPrice: <span class="tk-type">string</span>;
+            amount: <span class="tk-type">string</span>;
         })[];
-        quantity: string;
-        budget: string;
-        buyerId: string;
+        quantity: <span class="tk-type">string</span>;
+        budget: <span class="tk-type">string</span>;
+        buyerId: <span class="tk-type">string</span>;
     }[];
     sellers: {
-        sellerId: string;
-        reason: string;
-        quantity: string;
+        sellerId: <span class="tk-type">string</span>;
+        reason: <span class="tk-type">string</span>;
+        quantity: <span class="tk-type">string</span>;
     }[];
 };
-</code></pre></section><section class="api-module" id="settlement"><h2 id="settlement">settlement</h2><pre><code>import type { RoundSnapshot } from "./round.ts";
-export type Payment = {
-    id: string;
-    buyerId: string;
-    sellerId: string;
-    amount: string;
+</code></pre></section><section class="api-module" id="settlement"><h2 id="settlement">settlement</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">RoundSnapshot</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./round.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">Payment</span> = {
+    id: <span class="tk-type">string</span>;
+    buyerId: <span class="tk-type">string</span>;
+    sellerId: <span class="tk-type">string</span>;
+    amount: <span class="tk-type">string</span>;
 };
-export type SettlementPlan = {
-    version: 1 | 2;
-    roundId: string;
-    asset: string;
-    payments: readonly Payment[];
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SettlementPlan</span> = {
+    version: <span class="tk-number">1</span> | <span class="tk-number">2</span>;
+    roundId: <span class="tk-type">string</span>;
+    asset: <span class="tk-type">string</span>;
+    payments: <span class="tk-keyword">readonly</span> <span class="tk-type">Payment</span>[];
 };
-export declare function paymentIdFor(version: SettlementPlan["version"], roundId: string, buyerId: string, sellerId: string): string;
-export type PaymentReceipt = {
-    paymentId: string;
-    status: "pending" | "confirmed" | "failed";
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">paymentIdFor</span>(version: <span class="tk-type">SettlementPlan</span>[<span class="tk-string">"version"</span>], roundId: <span class="tk-type">string</span>, buyerId: <span class="tk-type">string</span>, sellerId: <span class="tk-type">string</span>): <span class="tk-type">string</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">PaymentReceipt</span> = {
+    paymentId: <span class="tk-type">string</span>;
+    status: <span class="tk-string">"pending"</span> | <span class="tk-string">"confirmed"</span> | <span class="tk-string">"failed"</span>;
 };
-export declare function createSettlementPlan(round: RoundSnapshot): SettlementPlan;
-export declare function summarizeSettlement(plan: SettlementPlan, receipts: readonly PaymentReceipt[]): {
-    pending: string;
-    confirmed: string;
-    failed: string;
-    paid: boolean;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">createSettlementPlan</span>(round: <span class="tk-type">RoundSnapshot</span>): <span class="tk-type">SettlementPlan</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">summarizeSettlement</span>(plan: <span class="tk-type">SettlementPlan</span>, receipts: <span class="tk-keyword">readonly</span> <span class="tk-type">PaymentReceipt</span>[]): {
+    pending: <span class="tk-type">string</span>;
+    confirmed: <span class="tk-type">string</span>;
+    failed: <span class="tk-type">string</span>;
+    paid: <span class="tk-type">boolean</span>;
 };
-</code></pre></section><section class="api-module" id="simulation"><h2 id="simulation">simulation</h2><pre><code>import type { Bid, Demand, RoundSpec } from "./types.ts";
-import type { Payment, PaymentReceipt } from "./settlement.ts";
-import type { ProcurementMechanism } from "./mechanism.ts";
-type StrategyContext = {
-    resource: Readonly&lt;RoundSpec["resource"]&gt;;
-    asset: string;
-    random: () =&gt; number;
+</code></pre></section><section class="api-module" id="simulation"><h2 id="simulation">simulation</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Bid</span>, <span class="tk-type">Demand</span>, <span class="tk-type">RoundSpec</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./types.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Payment</span>, <span class="tk-type">PaymentReceipt</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">ProcurementMechanism</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./mechanism.ts"</span>;
+<span class="tk-keyword">type</span> <span class="tk-type">StrategyContext</span> = {
+    resource: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">RoundSpec</span>[<span class="tk-string">"resource"</span>]&gt;;
+    asset: <span class="tk-type">string</span>;
+    random: () =&gt; <span class="tk-type">number</span>;
 };
-export type BuyerStrategy = {
-    id: string;
-    demand: (context: StrategyContext) =&gt; Demand | null | Promise&lt;Demand | null&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">BuyerStrategy</span> = {
+    id: <span class="tk-type">string</span>;
+    demand: (context: <span class="tk-type">StrategyContext</span>) =&gt; <span class="tk-type">Demand</span> | <span class="tk-literal">null</span> | <span class="tk-type">Promise</span>&lt;<span class="tk-type">Demand</span> | <span class="tk-literal">null</span>&gt;;
 };
-export type SellerStrategy = {
-    id: string;
-    offer: (context: StrategyContext &amp; {
-        pooledQuantity: string;
-    }) =&gt; Omit&lt;Bid, "salt"&gt; | null | Promise&lt;Omit&lt;Bid, "salt"&gt; | null&gt;;
-    reveal?: boolean;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SellerStrategy</span> = {
+    id: <span class="tk-type">string</span>;
+    offer: (context: <span class="tk-type">StrategyContext</span> &amp; {
+        pooledQuantity: <span class="tk-type">string</span>;
+    }) =&gt; <span class="tk-type">Omit</span>&lt;<span class="tk-type">Bid</span>, <span class="tk-string">"salt"</span>&gt; | <span class="tk-literal">null</span> | <span class="tk-type">Promise</span>&lt;<span class="tk-type">Omit</span>&lt;<span class="tk-type">Bid</span>, <span class="tk-string">"salt"</span>&gt; | <span class="tk-literal">null</span>&gt;;
+    reveal?: <span class="tk-type">boolean</span>;
 };
-export type SimulationOptions = {
-    spec: Omit&lt;RoundSpec, "buyers" | "sellers"&gt;;
-    seed: number;
-    mechanism?: ProcurementMechanism;
-    buyers: readonly BuyerStrategy[];
-    sellers: readonly SellerStrategy[];
-    paymentOutcome?: (payment: Readonly&lt;Payment&gt;) =&gt; PaymentReceipt["status"];
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SimulationOptions</span> = {
+    spec: <span class="tk-type">Omit</span>&lt;<span class="tk-type">RoundSpec</span>, <span class="tk-string">"buyers"</span> | <span class="tk-string">"sellers"</span>&gt;;
+    seed: <span class="tk-type">number</span>;
+    mechanism?: <span class="tk-type">ProcurementMechanism</span>;
+    buyers: <span class="tk-keyword">readonly</span> <span class="tk-type">BuyerStrategy</span>[];
+    sellers: <span class="tk-keyword">readonly</span> <span class="tk-type">SellerStrategy</span>[];
+    paymentOutcome?: (payment: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">Payment</span>&gt;) =&gt; <span class="tk-type">PaymentReceipt</span>[<span class="tk-string">"status"</span>];
 };
-export declare function simulateProcurement(options: SimulationOptions): Promise&lt;{
-    mode: "simulation";
-    transcript: import("./round.ts").RoundTranscript;
-    stages: readonly [{
-        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
-        spec: RoundSpec;
-        phase: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">simulateProcurement</span>(options: <span class="tk-type">SimulationOptions</span>): <span class="tk-type">Promise</span>&lt;{
+    mode: <span class="tk-string">"simulation"</span>;
+    transcript: <span class="tk-keyword">import</span>(<span class="tk-string">"./round.ts"</span>).<span class="tk-type">RoundTranscript</span>;
+    stages: <span class="tk-keyword">readonly</span> [{
+        splitAllocation?: <span class="tk-keyword">import</span>(<span class="tk-string">"./mechanism.ts"</span>).<span class="tk-type">SplitAllocation</span> | <span class="tk-literal">null</span> | <span class="tk-literal">undefined</span>;
+        spec: <span class="tk-type">RoundSpec</span>;
+        phase: <span class="tk-type">string</span>;
         buyers: {
-            quantity: string;
-            budget: string;
-            buyerId: string;
+            quantity: <span class="tk-type">string</span>;
+            budget: <span class="tk-type">string</span>;
+            buyerId: <span class="tk-type">string</span>;
         }[];
-        quantity: string;
+        quantity: <span class="tk-type">string</span>;
         bids: {
-            sellerId: string;
-            commitment: string;
+            sellerId: <span class="tk-type">string</span>;
+            commitment: <span class="tk-type">string</span>;
             reveal: {
-                capacity: string;
-                unitPrice: string;
-                salt: string;
-            } | null;
-            rejection: string | null;
+                capacity: <span class="tk-type">string</span>;
+                unitPrice: <span class="tk-type">string</span>;
+                salt: <span class="tk-type">string</span>;
+            } | <span class="tk-literal">null</span>;
+            rejection: <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
         }[];
-        allocation: import("./types.ts").Allocation | null;
+        allocation: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Allocation</span> | <span class="tk-literal">null</span>;
     }, {
-        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
-        spec: RoundSpec;
-        phase: string;
+        splitAllocation?: <span class="tk-keyword">import</span>(<span class="tk-string">"./mechanism.ts"</span>).<span class="tk-type">SplitAllocation</span> | <span class="tk-literal">null</span> | <span class="tk-literal">undefined</span>;
+        spec: <span class="tk-type">RoundSpec</span>;
+        phase: <span class="tk-type">string</span>;
         buyers: {
-            quantity: string;
-            budget: string;
-            buyerId: string;
+            quantity: <span class="tk-type">string</span>;
+            budget: <span class="tk-type">string</span>;
+            buyerId: <span class="tk-type">string</span>;
         }[];
-        quantity: string;
+        quantity: <span class="tk-type">string</span>;
         bids: {
-            sellerId: string;
-            commitment: string;
+            sellerId: <span class="tk-type">string</span>;
+            commitment: <span class="tk-type">string</span>;
             reveal: {
-                capacity: string;
-                unitPrice: string;
-                salt: string;
-            } | null;
-            rejection: string | null;
+                capacity: <span class="tk-type">string</span>;
+                unitPrice: <span class="tk-type">string</span>;
+                salt: <span class="tk-type">string</span>;
+            } | <span class="tk-literal">null</span>;
+            rejection: <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
         }[];
-        allocation: import("./types.ts").Allocation | null;
+        allocation: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Allocation</span> | <span class="tk-literal">null</span>;
     }, {
-        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
-        spec: RoundSpec;
-        phase: string;
+        splitAllocation?: <span class="tk-keyword">import</span>(<span class="tk-string">"./mechanism.ts"</span>).<span class="tk-type">SplitAllocation</span> | <span class="tk-literal">null</span> | <span class="tk-literal">undefined</span>;
+        spec: <span class="tk-type">RoundSpec</span>;
+        phase: <span class="tk-type">string</span>;
         buyers: {
-            quantity: string;
-            budget: string;
-            buyerId: string;
+            quantity: <span class="tk-type">string</span>;
+            budget: <span class="tk-type">string</span>;
+            buyerId: <span class="tk-type">string</span>;
         }[];
-        quantity: string;
+        quantity: <span class="tk-type">string</span>;
         bids: {
-            sellerId: string;
-            commitment: string;
+            sellerId: <span class="tk-type">string</span>;
+            commitment: <span class="tk-type">string</span>;
             reveal: {
-                capacity: string;
-                unitPrice: string;
-                salt: string;
-            } | null;
-            rejection: string | null;
+                capacity: <span class="tk-type">string</span>;
+                unitPrice: <span class="tk-type">string</span>;
+                salt: <span class="tk-type">string</span>;
+            } | <span class="tk-literal">null</span>;
+            rejection: <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
         }[];
-        allocation: import("./types.ts").Allocation | null;
+        allocation: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Allocation</span> | <span class="tk-literal">null</span>;
     }, {
-        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
-        spec: RoundSpec;
-        phase: string;
+        splitAllocation?: <span class="tk-keyword">import</span>(<span class="tk-string">"./mechanism.ts"</span>).<span class="tk-type">SplitAllocation</span> | <span class="tk-literal">null</span> | <span class="tk-literal">undefined</span>;
+        spec: <span class="tk-type">RoundSpec</span>;
+        phase: <span class="tk-type">string</span>;
         buyers: {
-            quantity: string;
-            budget: string;
-            buyerId: string;
+            quantity: <span class="tk-type">string</span>;
+            budget: <span class="tk-type">string</span>;
+            buyerId: <span class="tk-type">string</span>;
         }[];
-        quantity: string;
+        quantity: <span class="tk-type">string</span>;
         bids: {
-            sellerId: string;
-            commitment: string;
+            sellerId: <span class="tk-type">string</span>;
+            commitment: <span class="tk-type">string</span>;
             reveal: {
-                capacity: string;
-                unitPrice: string;
-                salt: string;
-            } | null;
-            rejection: string | null;
+                capacity: <span class="tk-type">string</span>;
+                unitPrice: <span class="tk-type">string</span>;
+                salt: <span class="tk-type">string</span>;
+            } | <span class="tk-literal">null</span>;
+            rejection: <span class="tk-type">string</span> | <span class="tk-literal">null</span>;
         }[];
-        allocation: import("./types.ts").Allocation | null;
+        allocation: <span class="tk-keyword">import</span>(<span class="tk-string">"./types.ts"</span>).<span class="tk-type">Allocation</span> | <span class="tk-literal">null</span>;
     }];
-    plan: import("./settlement.ts").SettlementPlan;
+    plan: <span class="tk-keyword">import</span>(<span class="tk-string">"./settlement.ts"</span>).<span class="tk-type">SettlementPlan</span>;
     settlement: {
-        pending: string;
-        confirmed: string;
-        failed: string;
-        paid: boolean;
+        pending: <span class="tk-type">string</span>;
+        confirmed: <span class="tk-type">string</span>;
+        failed: <span class="tk-type">string</span>;
+        paid: <span class="tk-type">boolean</span>;
     };
     payments: {
-        buyerId: string;
-        amount: string;
-        status: "failed" | "pending" | "simulated";
+        buyerId: <span class="tk-type">string</span>;
+        amount: <span class="tk-type">string</span>;
+        status: <span class="tk-string">"failed"</span> | <span class="tk-string">"pending"</span> | <span class="tk-string">"simulated"</span>;
     }[];
 }&gt;;
-export {};
-</code></pre></section><section class="api-module" id="spending-policy"><h2 id="spending-policy">spending-policy</h2><pre><code>import type { Payment, SettlementPlan } from "./settlement.ts";
-import { executeSettlement } from "./execute.ts";
-export type SpendingPolicy = {
-    roundId: string;
-    buyerId: string;
-    asset: string;
-    transportScope: string;
-    sellers: readonly string[];
-    maxAmount: string;
-    expiresAt: number;
+<span class="tk-keyword">export</span> {};
+</code></pre></section><section class="api-module" id="spending-policy"><h2 id="spending-policy">spending-policy</h2><pre data-lang="ts"><code><span class="tk-keyword">import</span> <span class="tk-keyword">type</span> { <span class="tk-type">Payment</span>, <span class="tk-type">SettlementPlan</span> } <span class="tk-keyword">from</span> <span class="tk-string">"./settlement.ts"</span>;
+<span class="tk-keyword">import</span> { executeSettlement } <span class="tk-keyword">from</span> <span class="tk-string">"./execute.ts"</span>;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">SpendingPolicy</span> = {
+    roundId: <span class="tk-type">string</span>;
+    buyerId: <span class="tk-type">string</span>;
+    asset: <span class="tk-type">string</span>;
+    transportScope: <span class="tk-type">string</span>;
+    sellers: <span class="tk-keyword">readonly</span> <span class="tk-type">string</span>[];
+    maxAmount: <span class="tk-type">string</span>;
+    expiresAt: <span class="tk-type">number</span>;
 };
-export declare function spendingPolicyMessage(policy: SpendingPolicy): Uint8Array&lt;ArrayBuffer&gt;;
-export declare function authorizeWithSpendingPolicies(input: SettlementPlan, transportScope: string, approvals: readonly {
-    policy: SpendingPolicy;
-    signature: Uint8Array;
-}[], resolveBuyerKey: (buyerId: string) =&gt; Promise&lt;Parameters&lt;typeof globalThis.crypto.subtle.verify&gt;[1] | undefined&gt;, clock?: () =&gt; number): Promise&lt;(payment: Readonly&lt;Payment&gt;) =&gt; boolean&gt;;
-export declare function executeWithSpendingPolicies(input: SettlementPlan, options: Omit&lt;Parameters&lt;typeof executeSettlement&gt;[1], "authorize"&gt; &amp; {
-    approvals: Parameters&lt;typeof authorizeWithSpendingPolicies&gt;[2];
-    resolveBuyerKey: Parameters&lt;typeof authorizeWithSpendingPolicies&gt;[3];
-    clock?: () =&gt; number;
-}): Promise&lt;{
-    receipts: (import("./settlement.ts").PaymentReceipt &amp; {
-        transactionHash?: string;
-        broadcastUncertain?: true;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">spendingPolicyMessage</span>(policy: <span class="tk-type">SpendingPolicy</span>): <span class="tk-type">Uint8Array</span>&lt;<span class="tk-type">ArrayBuffer</span>&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">authorizeWithSpendingPolicies</span>(input: <span class="tk-type">SettlementPlan</span>, transportScope: <span class="tk-type">string</span>, approvals: <span class="tk-keyword">readonly</span> {
+    policy: <span class="tk-type">SpendingPolicy</span>;
+    signature: <span class="tk-type">Uint8Array</span>;
+}[], resolveBuyerKey: (buyerId: <span class="tk-type">string</span>) =&gt; <span class="tk-type">Promise</span>&lt;<span class="tk-type">Parameters</span>&lt;<span class="tk-keyword">typeof</span> globalThis.crypto.subtle.verify&gt;[<span class="tk-number">1</span>] | <span class="tk-literal">undefined</span>&gt;, clock?: () =&gt; <span class="tk-type">number</span>): <span class="tk-type">Promise</span>&lt;(payment: <span class="tk-type">Readonly</span>&lt;<span class="tk-type">Payment</span>&gt;) =&gt; <span class="tk-type">boolean</span>&gt;;
+<span class="tk-keyword">export</span> <span class="tk-keyword">declare</span> <span class="tk-keyword">function</span> <span class="tk-fn">executeWithSpendingPolicies</span>(input: <span class="tk-type">SettlementPlan</span>, options: <span class="tk-type">Omit</span>&lt;<span class="tk-type">Parameters</span>&lt;<span class="tk-keyword">typeof</span> executeSettlement&gt;[<span class="tk-number">1</span>], <span class="tk-string">"authorize"</span>&gt; &amp; {
+    approvals: <span class="tk-type">Parameters</span>&lt;<span class="tk-keyword">typeof</span> authorizeWithSpendingPolicies&gt;[<span class="tk-number">2</span>];
+    resolveBuyerKey: <span class="tk-type">Parameters</span>&lt;<span class="tk-keyword">typeof</span> authorizeWithSpendingPolicies&gt;[<span class="tk-number">3</span>];
+    clock?: () =&gt; <span class="tk-type">number</span>;
+}): <span class="tk-type">Promise</span>&lt;{
+    receipts: (<span class="tk-keyword">import</span>(<span class="tk-string">"./settlement.ts"</span>).<span class="tk-type">PaymentReceipt</span> &amp; {
+        transactionHash?: <span class="tk-type">string</span>;
+        broadcastUncertain?: <span class="tk-literal">true</span>;
     })[];
     summary: {
-        pending: string;
-        confirmed: string;
-        failed: string;
-        paid: boolean;
+        pending: <span class="tk-type">string</span>;
+        confirmed: <span class="tk-type">string</span>;
+        failed: <span class="tk-type">string</span>;
+        paid: <span class="tk-type">boolean</span>;
     };
 }&gt;;
-</code></pre></section><section class="api-module" id="types"><h2 id="types">types</h2><pre><code>export type RoundSpec = {
-    id: string;
+</code></pre></section><section class="api-module" id="types"><h2 id="types">types</h2><pre data-lang="ts"><code><span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">RoundSpec</span> = {
+    id: <span class="tk-type">string</span>;
     resource: {
-        label: string;
-        unit: string;
-        deliveryWindow: string;
+        label: <span class="tk-type">string</span>;
+        unit: <span class="tk-type">string</span>;
+        deliveryWindow: <span class="tk-type">string</span>;
     };
-    asset: string;
-    mechanismId?: string;
-    buyers: readonly string[];
-    sellers: readonly string[];
-    demandCloses: number;
-    commitCloses: number;
-    revealCloses: number;
+    asset: <span class="tk-type">string</span>;
+    mechanismId?: <span class="tk-type">string</span>;
+    buyers: <span class="tk-keyword">readonly</span> <span class="tk-type">string</span>[];
+    sellers: <span class="tk-keyword">readonly</span> <span class="tk-type">string</span>[];
+    demandCloses: <span class="tk-type">number</span>;
+    commitCloses: <span class="tk-type">number</span>;
+    revealCloses: <span class="tk-type">number</span>;
 };
-export type Demand = {
-    quantity: string;
-    budget: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">Demand</span> = {
+    quantity: <span class="tk-type">string</span>;
+    budget: <span class="tk-type">string</span>;
 };
-export type Bid = {
-    capacity: string;
-    unitPrice: string;
-    salt: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">Bid</span> = {
+    capacity: <span class="tk-type">string</span>;
+    unitPrice: <span class="tk-type">string</span>;
+    salt: <span class="tk-type">string</span>;
 };
-export type Allocation = {
-    sellerId: string;
-    unitPrice: string;
-    total: string;
+<span class="tk-keyword">export</span> <span class="tk-keyword">type</span> <span class="tk-type">Allocation</span> = {
+    sellerId: <span class="tk-type">string</span>;
+    unitPrice: <span class="tk-type">string</span>;
+    total: <span class="tk-type">string</span>;
     shares: {
-        buyerId: string;
-        quantity: string;
-        amount: string;
+        buyerId: <span class="tk-type">string</span>;
+        quantity: <span class="tk-type">string</span>;
+        amount: <span class="tk-type">string</span>;
     }[];
 };
 </code></pre></section></div>

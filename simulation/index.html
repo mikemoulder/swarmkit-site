@@ -50,24 +50,24 @@
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
         <div class="doc__body">
 <h2 id="two-execution-styles">Two execution styles</h2><p>simulateProcurement runs a complete deterministic round and returns its stage snapshots, transcript, payment plan and synthetic receipts. Use it for unit tests and experiments. startSimulation creates an empty checkpoint; advanceSimulation executes exactly one stage. Use the incremental API for a scheduler or interactive reference application.</p>
-<pre><code>import { startSimulation, advanceSimulation, replayRound } from "near-swarmkit";
-let checkpoint = startSimulation(options); // no callbacks invoked
-checkpoint = await advanceSimulation(checkpoint, options); // buyer demands
-checkpoint = await advanceSimulation(checkpoint, options); // seller commitments
-// Persist checkpoint atomically before progressing.
-checkpoint = await advanceSimulation(checkpoint, options); // reveals
-checkpoint = await advanceSimulation(checkpoint, options); // closed allocation
-const publicSnapshot = await replayRound(checkpoint.transcript);</code></pre>
+<pre data-lang="ts"><code><span class="tk-keyword">import</span> { startSimulation, advanceSimulation, replayRound } <span class="tk-keyword">from</span> <span class="tk-string">"near-swarmkit"</span>;
+<span class="tk-keyword">let</span> checkpoint = <span class="tk-fn">startSimulation</span>(options); <span class="tk-comment">// no callbacks invoked</span>
+checkpoint = <span class="tk-keyword">await</span> <span class="tk-fn">advanceSimulation</span>(checkpoint, options); <span class="tk-comment">// buyer demands</span>
+checkpoint = <span class="tk-keyword">await</span> <span class="tk-fn">advanceSimulation</span>(checkpoint, options); <span class="tk-comment">// seller commitments</span>
+<span class="tk-comment">// Persist checkpoint atomically before progressing.</span>
+checkpoint = <span class="tk-keyword">await</span> <span class="tk-fn">advanceSimulation</span>(checkpoint, options); <span class="tk-comment">// reveals</span>
+checkpoint = <span class="tk-keyword">await</span> <span class="tk-fn">advanceSimulation</span>(checkpoint, options); <span class="tk-comment">// closed allocation</span>
+<span class="tk-keyword">const</span> publicSnapshot = <span class="tk-keyword">await</span> <span class="tk-fn">replayRound</span>(checkpoint.transcript);</code></pre>
 <h2 id="asynchronous-policies">Asynchronous policies</h2><p>Buyer demand and seller offer callbacks may return promises. A seller sees the pooled quantity; both receive the resource, asset and seeded random function. Policies may close over application history, balances or inventory. Keep them free of external side effects: if a host crashes before committing the returned checkpoint, a callback can run again. Hosts should impose timeouts and cancellation around external computations.</p>
 <h2 id="private-checkpoints-public-transcripts">Private checkpoints, public transcripts</h2><p>A SimulationSession includes unrevealed seller offers. It is trusted private state, not an interchange format to accept from strangers. Publish only its transcript or replayed snapshot. The built-in simulation salts are deterministic and must not be used for live hidden bids.</p>
 <h2 id="a-working-economy">A working economy</h2><p>The Market reference applies the SDK to 20 GPU buyers and five sellers, or a smaller inference market. It maintains inventory, work consumption, earned income, replenishment costs and utilization-based seller quotes. The same controller runs against IndexedDB in the browser and SQLite in the local service. The tests kill a process after recording a simulated broadcast and recover it in a new process.</p>
-<pre><code>git clone https://github.com/mikemoulder/swarmkit-market
-cd swarmkit-market
-npm ci
-npm test
-npm run experiment -- 12
-npm run build
-npm run serve</code></pre><p>All these economy runs are simulation. Synthetic receipts and synthetic buyer approvals cannot move real funds. The experiment retains its SQLite database across invocations; use a new database path as the second argument for an independent run.</p>
+<pre data-lang="shell"><code><span class="tk-fn">git</span> clone <span class="tk-string">https://github.com/mikemoulder/swarmkit-market</span>
+<span class="tk-fn">cd</span> swarmkit-market
+<span class="tk-fn">npm</span> ci
+<span class="tk-fn">npm</span> test
+<span class="tk-fn">npm</span> run experiment <span class="tk-keyword">--</span> 12
+<span class="tk-fn">npm</span> run build
+<span class="tk-fn">npm</span> run serve</code></pre><p>All these economy runs are simulation. Synthetic receipts and synthetic buyer approvals cannot move real funds. The experiment retains its SQLite database across invocations; use a new database path as the second argument for an independent run.</p>
 <h2 id="runnable-example">Runnable example</h2><p><a href="../examples/incremental-market.mjs">Download incremental-market.mjs</a>. Run it from a project with near-swarmkit installed. It demonstrates serialization and async policies; the reference application supplies actual durable storage.</p></div>
         <nav class="doc__next" aria-label="Next page"><span>Next</span><a href="../storage/">Persist rounds and payment journals →</a></nav>
       </article>
