@@ -16,8 +16,8 @@ for (const [slug, title] of guidePages) {
 const pages = [
   ["docs", "Run your first market", "Build a sealed-bid round with two buyers and two sellers. Run it locally with Node 22.18 or newer.", `
     <h2>Install the SDK</h2>
-    <p>Run <code>npm ci</code> and <code>npm run pack:sdk</code> in the <a href="https://github.com/mikemoulder/swarmkit">SDK repository</a>. Install the resulting tarball in your Node project. The package name is <code>near-swarmkit</code>.</p>
-    <pre><code>npm install /path/to/near-swarmkit-0.1.0.tgz</code></pre>
+    <p>Install <a href="https://www.npmjs.com/package/near-swarmkit"><code>near-swarmkit</code></a> from npm. It is ESM with TypeScript declarations and has no runtime dependencies.</p>
+    <pre><code>npm install near-swarmkit</code></pre>
     <h2>Pool inference demand</h2>
     <p>Save this as <code>market.mjs</code> and run <code>node market.mjs</code>. Use integer strings for quantity and amounts.</p>
     <pre><code id="quickstart"></code></pre>

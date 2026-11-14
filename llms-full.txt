@@ -3,8 +3,8 @@ https://swarmkit.pages.dev/docs/
 Build a sealed-bid round with two buyers and two sellers. Run it locally with Node 22.18 or newer.
 
  Install the SDK 
- Run npm ci and npm run pack:sdk in the SDK repository . Install the resulting tarball in your Node project. The package name is near-swarmkit . 
- npm install /path/to/near-swarmkit-0.1.0.tgz 
+ Install near-swarmkit from npm. It is ESM with TypeScript declarations and has no runtime dependencies. 
+ npm install near-swarmkit 
  Pool inference demand 
  Save this as market.mjs and run node market.mjs . Use integer strings for quantity and amounts. 
  import { simulateProcurement } from "near-swarmkit";
@@ -800,7 +800,7 @@ documentation UI / policies / economy controller
  Reference economy responsibilities The market’s economy controller defines work demand, capacity consumption, seller quote policies, replenishment, money flows and event history. Its browser host uses IndexedDB with Web Locks; its local HTTP host uses SQLite, an operator token and conditional revision updates. Both consume the packaged SDK. The local host is a simulation coordinator, not a public production custody service. 
  Economic rules Collect replaceable buyer demand before demand closes. Bind each seller’s immutable offer with a SHA-256 commitment. Verify reveals against that commitment during the reveal window. Fill the complete pool within every buyer cap and every seller capacity, or make no allocation. Charge the quoted unit price for each allocated line. Settle independent buyer–seller payments. Preserve partial outcomes and reconcile uncertain transactions. Single-seller procurement and split procurement use different clearing rules; see Mechanisms . The GPU market remains the original reference; inference and dataset examples exercise reuse. 
  On-chain boundary Auction inputs, clearing and resource delivery remain off-chain. Native testnet evidence proves the recorded transfers. Intents execution moves balances in the Verifier. Neither proves delivery of the purchased resource. No SwarmKit escrow contract is deployed. 
- Releases and compatibility The package remains an unpublished 0.1.0 release candidate. Build and install the tarball from source. Transcript version 1, settlement plan versions 1 and 2, and simulation checkpoint version 1 are distinct formats. Do not rewrite saved payment identities or silently swap mechanism versions. The old root dashboard remains a minimal SDK example; the standalone Market is the primary reference application. 
+ Releases and compatibility near-swarmkit 0.1.0 is published on npm as an alpha release. Transcript version 1, settlement plan versions 1 and 2, and simulation checkpoint version 1 are distinct formats. Do not rewrite saved payment identities or silently swap mechanism versions. The old root dashboard remains a minimal SDK example; the GPU co-op is the primary reference application. 
 
 # Diagnose failures without losing state
 https://swarmkit.pages.dev/errors/

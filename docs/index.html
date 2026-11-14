@@ -50,8 +50,8 @@
         <div class="doc__actions"><button class="btn btn--secondary" id="copy-page" type="button">Copy page as text</button><a class="link" href="../llms-full.txt">Read every page as plain text</a></div>
         <div class="doc__body">
     <h2 id="install-the-sdk">Install the SDK</h2>
-    <p>Run <code>npm ci</code> and <code>npm run pack:sdk</code> in the <a href="https://github.com/mikemoulder/swarmkit">SDK repository</a>. Install the resulting tarball in your Node project. The package name is <code>near-swarmkit</code>.</p>
-    <pre data-lang="shell"><code><span class="tk-fn">npm</span> install <span class="tk-string">/path/to/near-swarmkit-0.1.0.tgz</span></code></pre>
+    <p>Install <a href="https://www.npmjs.com/package/near-swarmkit"><code>near-swarmkit</code></a> from npm. It is ESM with TypeScript declarations and has no runtime dependencies.</p>
+    <pre data-lang="shell"><code><span class="tk-fn">npm</span> install near-swarmkit</code></pre>
     <h2 id="pool-inference-demand">Pool inference demand</h2>
     <p>Save this as <code>market.mjs</code> and run <code>node market.mjs</code>. Use integer strings for quantity and amounts.</p>
     <pre data-lang="ts"><code id="quickstart"><span class="tk-keyword">import</span> { simulateProcurement } <span class="tk-keyword">from</span> <span class="tk-string">"near-swarmkit"</span>;
