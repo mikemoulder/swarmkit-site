@@ -283,7 +283,7 @@
           <p><a class="link" href="./concepts/">Read the coordination model</a></p>
         </div>
         <div class="faq span-6 start-7">
-          <div class="faq__item"><h3>Does the GPU co-op spend real NEAR?</h3><p>No. Its prices are simulated dollars. The receipts above are native testnet transfers from a separate validation run.</p></div>
+          <div class="faq__item"><h3>Does the GPU co-op spend real NEAR?</h3><p>Only testnet NEAR. Prices are simulated dollars; pressing Settle pays your share on NEAR testnet at 0.0001 NEAR per dollar.</p></div>
           <div class="faq__item"><h3>Does SwarmKit settle through NEAR Intents?</h3><p>The SDK ships an Intents transport that signs NEP-413 transfers and preflights them against the Verifier. The published receipts are native transfers, not Intents.</p></div>
           <div class="faq__item"><h3>Can I write my own allocation rule?</h3><p>Yes. Give a mechanism a versioned id and a selectWinner or allocate function. Replay and audit use the same rule.</p></div>
           <div class="faq__item"><h3>What if the process dies mid-payment?</h3><p>The runner journals each signed transfer before sending it. On restart it checks the stored hash instead of signing again.</p></div>
