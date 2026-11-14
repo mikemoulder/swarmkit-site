@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecture and market rules | SwarmKit</title>
+  <meta name="description" content="See what the SDK owns, what the reference application owns and where NEAR executes.">
+  <meta name="theme-color" content="#191b19">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/system.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
+</head>
+<body class="docs-body">
+  <header class="site-header"><div class="wrap topbar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
+    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
+  </div></header>
+  <main id="main" class="wrap docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups"><h2>Start here</h2><a href="../docs/">Quickstart</a><a href="../concepts/">Coordination model</a><h2>Build a market</h2><a href="../mechanisms/">Allocation rules</a><a href="../simulation/">Simulation & strategies</a><a href="../storage/">State & recovery</a><a href="../settlement/">NEAR settlement</a><h2>Reference</h2><a href="../reference/">SDK API</a><a href="../architecture/" aria-current="page">Architecture</a><a href="../errors/">Errors & troubleshooting</a><h2>For agents</h2><a href="../agents/">Agent integration</a></div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / architecture</div><h1>Architecture and market rules</h1><p>See what the SDK owns, what the reference application owns and where NEAR executes.</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>
+<h2 id="three-repositories-one-sdk-boundary">Three repositories, one SDK boundary</h2><pre><code>swarmkit-site             swarmkit-market
+documentation            UI / policies / economy controller
+       |                       |
+       +---- near-swarmkit -----+
+             rounds / mechanisms / replay
+             approvals / settlement runner / audit
+                      |
+            application-provided adapters
+         storage / participant auth / signing
+                      |
+            NEAR testnet or Intents Verifier</code></pre>
+<h2 id="sdk-responsibilities">SDK responsibilities</h2><p>src/swarm holds the round engine, mechanisms, replay/storage contracts, simulation APIs, spending policies, settlement runner and NEAR adapters. It does not hold application credentials, request handlers or resource delivery logic. Its standalone package excludes the root Next.js dashboard dependencies.</p>
+<h2 id="reference-economy-responsibilities">Reference economy responsibilities</h2><p>The market’s economy controller defines work demand, capacity consumption, seller quote policies, replenishment, money flows and event history. Its browser host uses IndexedDB with Web Locks; its local HTTP host uses SQLite, an operator token and conditional revision updates. Both consume the packaged SDK. The local host is a simulation coordinator, not a public production custody service.</p>
+<h2 id="economic-rules">Economic rules</h2><ol><li>Collect replaceable buyer demand before demand closes.</li><li>Bind each seller’s immutable offer with a SHA-256 commitment.</li><li>Verify reveals against that commitment during the reveal window.</li><li>Fill the complete pool within every buyer cap and every seller capacity, or make no allocation.</li><li>Charge the quoted unit price for each allocated line.</li><li>Settle independent buyer–seller payments. Preserve partial outcomes and reconcile uncertain transactions.</li></ol><p>Single-seller procurement and split procurement use different clearing rules; see <a href="../mechanisms/">Mechanisms</a>. The GPU market remains the original reference; inference and dataset examples exercise reuse.</p>
+<h2 id="on-chain-boundary">On-chain boundary</h2><p>Auction inputs, clearing and resource delivery remain off-chain. Native testnet evidence proves the recorded transfers. Intents execution moves balances in the Verifier. Neither proves delivery of the purchased resource. No SwarmKit escrow contract is deployed.</p>
+<h2 id="releases-and-compatibility">Releases and compatibility</h2><p>The package remains an unpublished 0.1.0 release candidate. Build and install the tarball from source. Transcript version 1, settlement plan versions 1 and 2, and simulation checkpoint version 1 are distinct formats. Do not rewrite saved payment identities or silently swap mechanism versions. The old root dashboard remains a minimal SDK example; the standalone Market is the primary reference application.</p><nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../errors/">Diagnose failures without losing state ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#three-repositories-one-sdk-boundary">Three repositories, one SDK boundary</a><a href="#sdk-responsibilities">SDK responsibilities</a><a href="#reference-economy-responsibilities">Reference economy responsibilities</a><a href="#economic-rules">Economic rules</a><a href="#on-chain-boundary">On-chain boundary</a><a href="#releases-and-compatibility">Releases and compatibility</a></aside>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+<script src="../docs.js" defer></script></body>
+</html>

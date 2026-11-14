@@ -4,54 +4,606 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SDK reference | SwarmKit</title>
-  <meta name="description" content="The public TypeScript interface for procurement, replay, signing, and settlement.">
-  <meta name="theme-color" content="#0a0d14">
+  <meta name="description" content="TypeScript contracts generated from the packaged SDK declarations.">
+  <meta name="theme-color" content="#191b19">
   <meta name="page-type" content="software">
   <meta name="site-kind" content="software">
   <link rel="icon" href="../icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/system.css">
-  <link rel="stylesheet" href="../site.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
 </head>
 <body class="docs-body">
   <header class="site-header"><div class="wrap topbar">
     <a class="skip-link" href="#main">Skip to content</a>
-    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">✳</span> SwarmKit</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
     <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
   </div></header>
   <main id="main" class="wrap docs-layout">
-    <nav class="docs-nav" aria-label="Documentation"><a href="../docs/">Quickstart</a><a href="../reference/" aria-current="page">SDK reference</a><a href="../agents/">Agent guide</a></nav>
-    <article class="docs-content"><h1>SDK reference</h1><p>The public TypeScript interface for procurement, replay, signing, and settlement.</p>
-    <h2>Coordinator and allocation</h2>
-    <table class="doc-table">
-      <thead><tr><th scope="col">Export</th><th scope="col">Use</th></tr></thead>
-      <tbody>
-        <tr><td><code>createRound</code></td><td>Configure buyers, sellers, one resource, one asset, three deadlines, and an optional clock and mechanism.</td></tr>
-        <tr><td><code>commitBid</code></td><td>Hash the round ID, seller ID, capacity, price, and a 32-byte salt. Generate a fresh cryptographic salt for live bids.</td></tr>
-        <tr><td><code>lowestPrice</code></td><td>Choose the cheapest seller that can cover the entire pool within all buyer caps. Account ID breaks ties.</td></tr>
-        <tr><td><code>cheapestCapacity</code></td><td>Serve tight budgets first, drawing from lower-priced sellers. All demand must be filled. Charges use each seller’s bid.</td></tr>
-        <tr><td><code>simulateProcurement</code></td><td>Run buyer and seller strategies with a seed. Inspect stage snapshots, the transcript and synthetic payments.</td></tr>
-      </tbody>
-    </table>
-    <p>A custom <code>ProcurementMechanism</code> can select an eligible winner or supply split lines. Pin its implementation to a versioned ID when replaying a round.</p>
-    <h2>Replay and storage</h2>
-    <p><code>round.transcript()</code> returns accepted events, the round specification, and its observation time. <code>replayRound</code> recomputes a snapshot. <code>resumeRound</code> reopens a round with a clock at or after that observation time.</p>
-    <p>Use <code>openStoredRound</code> and <code>submitStoredRoundEvent</code> with a <code>RoundStore</code>. Its compare-and-set operation must be atomic. A transcript proves consistency with its own recorded inputs. Use trusted storage and authenticate participants at your service boundary.</p>
-    <h2>Settlement and NEAR</h2>
-    <table class="doc-table">
-      <thead><tr><th scope="col">Export</th><th scope="col">Use</th></tr></thead>
-      <tbody>
-        <tr><td><code>createSettlementPlan</code></td><td>Derive payment IDs and amounts from a closed snapshot. Split plans use one ID per buyer–seller pair.</td></tr>
-        <tr><td><code>executeSettlement</code></td><td>Authorize, journal signed bytes, inspect the stored hash, and send or reconcile the same transaction.</td></tr>
-        <tr><td><code>executeWithSpendingPolicies</code></td><td>Check buyer Ed25519 approvals against the plan’s asset, sellers, cumulative amounts, scope and expiry.</td></tr>
-        <tr><td><code>planNearSubaccounts</code></td><td>Prepare create, fund, and add-key actions for direct children. The application supplies the parent signer.</td></tr>
-        <tr><td><code>nearTestnetTransport</code></td><td>Settle native testnet NEAR with an application-supplied signer and check the finalized transfer.</td></tr>
-        <tr><td><code>nearIntentsTransport</code></td><td>Settle supported NEP-141 Verifier balances with a buyer NEP-413 signer and relayer signer. Preflight and reconcile finalized execution.</td></tr>
-        <tr><td><code>auditSettlement</code></td><td>Replay a transcript, check receipt IDs and hashes, and compare claimed and observed outcomes.</td></tr>
-      </tbody>
-    </table>
-    <p class="note">Settlement transfers are independent. A round can settle partially. A confirmed transfer requires a separate seller-authorized payment to refund. Keep journal entries private because they contain signed transaction bytes.</p>
-    <p><a href="https://docs.near-intents.org/">Read the NEAR Intents documentation</a></p></article>
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups"><h2>Start here</h2><a href="../docs/">Quickstart</a><a href="../concepts/">Coordination model</a><h2>Build a market</h2><a href="../mechanisms/">Allocation rules</a><a href="../simulation/">Simulation & strategies</a><a href="../storage/">State & recovery</a><a href="../settlement/">NEAR settlement</a><h2>Reference</h2><a href="../reference/" aria-current="page">SDK API</a><a href="../architecture/">Architecture</a><a href="../errors/">Errors & troubleshooting</a><h2>For agents</h2><a href="../agents/">Agent integration</a></div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / reference</div><h1>SDK reference</h1><p>TypeScript contracts generated from the packaged SDK declarations.</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div><h2 id="public-entry-point">Public entry point</h2><p>Import public symbols from near-swarmkit. The index below lists the public exports; module declarations provide their full types. Supporting internal types are shown for context and are not separate package entry points.</p><section class="api-module" id="index"><h2 id="index">index</h2><pre><code>export { commitBid, createRound } from "./round.ts";
+export type { Allocation, Bid, Demand, RoundSnapshot, RoundSpec } from "./round.ts";
+export type { RoundCommand, RoundEvent, RoundTranscript } from "./round.ts";
+export { cheapestCapacity, lowestPrice } from "./mechanism.ts";
+export type { EligibleOffer, FulfillmentLine, ProcurementMechanism, SplitAllocation } from "./mechanism.ts";
+export { openStoredRound, replayRound, resumeRound, settlementPlanFromTranscript, submitStoredRoundEvent, } from "./replay.ts";
+export type { RoundStore } from "./replay.ts";
+export { simulateProcurement } from "./simulation.ts";
+export type { BuyerStrategy, SellerStrategy, SimulationOptions } from "./simulation.ts";
+export { createSettlementPlan, summarizeSettlement } from "./settlement.ts";
+export type { Payment, PaymentReceipt, SettlementPlan } from "./settlement.ts";
+export { INTENTS_VERIFIER, nearIntentsExecutionCall, planNearSubaccounts, prepareNearIntentsTransfers, readNearIntentsSalt, signNearIntentsTransfers, } from "./near.ts";
+export type { NearIntentSigningRequest } from "./near.ts";
+export { executeSettlement } from "./execute.ts";
+export type { SignedPayment, SettlementEntry, SettlementJournal, SettlementTransport } from "./execute.ts";
+export { NATIVE_TESTNET_NEAR, nearTestnetTransport } from "./near-testnet.ts";
+export { nearIntentsTransport } from "./near-intents-transport.ts";
+export { auditSettlement } from "./audit.ts";
+export type { ReceiptClaim } from "./audit.ts";
+export { authorizeWithSpendingPolicies, executeWithSpendingPolicies, spendingPolicyMessage } from "./spending-policy.ts";
+export type { SpendingPolicy } from "./spending-policy.ts";
+export { startSimulation, advanceSimulation, explainAllocation } from "./session.ts";
+export type { SimulationSession } from "./session.ts";
+</code></pre></section><section class="api-module" id="audit"><h2 id="audit">audit</h2><pre><code>import type { PaymentReceipt } from "./settlement.ts";
+import type { RoundTranscript } from "./round.ts";
+import type { ProcurementMechanism } from "./mechanism.ts";
+import type { SettlementTransport } from "./execute.ts";
+export type ReceiptClaim = PaymentReceipt &amp; {
+    transactionHash?: string;
+};
+export declare function auditSettlement(transcript: RoundTranscript, claims: readonly ReceiptClaim[], options?: {
+    mechanism?: ProcurementMechanism;
+    verifier?: Pick&lt;SettlementTransport, "asset" | "inspect"&gt;;
+}): Promise&lt;{
+    plan: import("./settlement.ts").SettlementPlan;
+    claimedSummary: {
+        pending: string;
+        confirmed: string;
+        failed: string;
+        paid: boolean;
+    };
+    verifiedSummary: {
+        pending: string;
+        confirmed: string;
+        failed: string;
+        paid: boolean;
+    } | undefined;
+    checks: {
+        paymentId: string;
+        transactionHash: string | undefined;
+        claimed: "failed" | "pending" | "confirmed";
+        observed: "failed" | "pending" | "confirmed" | undefined;
+        matches: boolean | undefined;
+    }[];
+}&gt;;
+</code></pre></section><section class="api-module" id="execute"><h2 id="execute">execute</h2><pre><code>import type { Payment, PaymentReceipt, SettlementPlan } from "./settlement.ts";
+export type SignedPayment = {
+    hash: string;
+    bytes: string;
+};
+export type SettlementEntry = {
+    payment: Payment;
+    signed: SignedPayment;
+};
+export type SettlementJournal = {
+    reserve(scope: string, candidate: SettlementEntry): Promise&lt;SettlementEntry&gt;;
+    read(scope: string): Promise&lt;SettlementEntry | undefined&gt;;
+    bindPlan?(scope: string, fingerprint: string): Promise&lt;boolean&gt;;
+};
+export type SettlementTransport = {
+    scope: string;
+    asset: string;
+    prepare(payment: Readonly&lt;Payment&gt;): Promise&lt;SignedPayment&gt;;
+    broadcast(signed: Readonly&lt;SignedPayment&gt;): Promise&lt;void&gt;;
+    inspect(payment: Readonly&lt;Payment&gt;, hash: string): Promise&lt;PaymentReceipt["status"]&gt;;
+};
+export declare function executeSettlement(input: SettlementPlan, options: {
+    transport: SettlementTransport;
+    journal: SettlementJournal;
+    authorize: (payment: Readonly&lt;Payment&gt;) =&gt; boolean | Promise&lt;boolean&gt;;
+}): Promise&lt;{
+    receipts: (PaymentReceipt &amp; {
+        transactionHash?: string;
+        broadcastUncertain?: true;
+    })[];
+    summary: {
+        pending: string;
+        confirmed: string;
+        failed: string;
+        paid: boolean;
+    };
+}&gt;;
+</code></pre></section><section class="api-module" id="mechanism"><h2 id="mechanism">mechanism</h2><pre><code>export type EligibleOffer = Readonly&lt;{
+    sellerId: string;
+    unitPrice: string;
+    capacity: string;
+}&gt;;
+export type FulfillmentLine = {
+    buyerId: string;
+    sellerId: string;
+    quantity: string;
+};
+export type SplitAllocation = {
+    lines: (FulfillmentLine &amp; {
+        unitPrice: string;
+        amount: string;
+    })[];
+    total: string;
+};
+type Buyer = Readonly&lt;{
+    buyerId: string;
+    quantity: string;
+    budget: string;
+}&gt;;
+export type ProcurementMechanism = Readonly&lt;{
+    id: string;
+} &amp; ({
+    selectWinner: (offers: readonly EligibleOffer[]) =&gt; string | null;
+} | {
+    allocate: (buyers: readonly Buyer[], offers: readonly EligibleOffer[]) =&gt; readonly FulfillmentLine[] | null;
+})&gt;;
+export declare const cheapestCapacity: ProcurementMechanism;
+export declare function validateSplit(buyers: readonly Buyer[], offers: readonly EligibleOffer[], lines: readonly FulfillmentLine[]): SplitAllocation;
+export declare const lowestPrice: ProcurementMechanism;
+export {};
+</code></pre></section><section class="api-module" id="near-intents-transport"><h2 id="near-intents-transport">near-intents-transport</h2><pre><code>import type { SettlementTransport, SignedPayment } from "./execute.ts";
+import { nearIntentsExecutionCall, signNearIntentsTransfers } from "./near.ts";
+type SigningCallback = Parameters&lt;typeof signNearIntentsTransfers&gt;[1];
+type ExecutionCall = ReturnType&lt;typeof nearIntentsExecutionCall&gt;;
+export declare function nearIntentsTransport(options: {
+    asset: string;
+    relayerId: string;
+    signIntent: SigningCallback;
+    signTransaction: (call: ExecutionCall) =&gt; Promise&lt;SignedPayment&gt;;
+    rpcUrl?: string;
+}): SettlementTransport;
+export {};
+</code></pre></section><section class="api-module" id="near-testnet"><h2 id="near-testnet">near-testnet</h2><pre><code>import type { SettlementTransport, SignedPayment } from "./execute.ts";
+import type { Payment } from "./settlement.ts";
+export declare const NATIVE_TESTNET_NEAR = "near:testnet:native";
+export declare const nearTransactionHash: RegExp;
+export declare function nearTestnetTransport(sign: (payment: Readonly&lt;Payment&gt;) =&gt; Promise&lt;SignedPayment&gt;, rpcUrl?: string): SettlementTransport;
+</code></pre></section><section class="api-module" id="near"><h2 id="near">near</h2><pre><code>import type { Payment, SettlementPlan } from "./settlement.ts";
+export declare const INTENTS_VERIFIER = "intents.near";
+export declare function planNearSubaccounts(parentId: string, agents: readonly {
+    label: string;
+    publicKey: string;
+    fundingYoctoNear: string;
+}[]): {
+    signerId: string;
+    receiverId: string;
+    actions: readonly [{
+        readonly type: "CreateAccount";
+    }, {
+        readonly type: "Transfer";
+        readonly deposit: string;
+    }, {
+        readonly type: "AddFullAccessKey";
+        readonly publicKey: string;
+    }];
+}[];
+export type NearIntentSigningRequest = Readonly&lt;{
+    payment: Readonly&lt;Payment&gt;;
+    recipient: typeof INTENTS_VERIFIER;
+    message: string;
+    nonce: string;
+}&gt;;
+type IntentSignature = {
+    publicKey: string;
+    signature: string;
+};
+type SignedIntent = {
+    standard: "nep413";
+    payload: Pick&lt;NearIntentSigningRequest, "recipient" | "message" | "nonce"&gt;;
+    public_key: string;
+    signature: string;
+};
+export declare function prepareNearIntentsTransfers(plan: SettlementPlan, options: {
+    salt: string;
+    deadline: Date;
+}): NearIntentSigningRequest[];
+export declare function signNearIntentsTransfers(requests: readonly NearIntentSigningRequest[], sign: (request: NearIntentSigningRequest) =&gt; Promise&lt;IntentSignature&gt;): Promise&lt;{
+    signed: SignedIntent[];
+}&gt;;
+export declare function nearIntentsExecutionCall(args: Awaited&lt;ReturnType&lt;typeof signNearIntentsTransfers&gt;&gt;): {
+    readonly network: "mainnet";
+    readonly receiverId: "intents.near";
+    readonly methodName: "execute_intents";
+    readonly args: {
+        signed: SignedIntent[];
+    };
+    readonly attachedDepositYoctoNear: "0";
+};
+export declare function readNearIntentsSalt(rpcUrl?: string): Promise&lt;string&gt;;
+export {};
+</code></pre></section><section class="api-module" id="replay"><h2 id="replay">replay</h2><pre><code>import type { RoundCommand, RoundTranscript } from "./round.ts";
+import type { ProcurementMechanism } from "./mechanism.ts";
+export declare function resumeRound(transcript: RoundTranscript, clock?: () =&gt; number, mechanism?: ProcurementMechanism): Promise&lt;{
+    submitDemand: (buyerId: string, request: import("./types.ts").Demand | null) =&gt; boolean;
+    submitCommitment: (sellerId: string, hash: string) =&gt; boolean;
+    revealBid: (sellerId: string, bid: import("./types.ts").Bid) =&gt; Promise&lt;boolean&gt;;
+    snapshot: () =&gt; {
+        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+        spec: import("./types.ts").RoundSpec;
+        phase: string;
+        buyers: {
+            quantity: string;
+            budget: string;
+            buyerId: string;
+        }[];
+        quantity: string;
+        bids: {
+            sellerId: string;
+            commitment: string;
+            reveal: {
+                capacity: string;
+                unitPrice: string;
+                salt: string;
+            } | null;
+            rejection: string | null;
+        }[];
+        allocation: import("./types.ts").Allocation | null;
+    };
+    transcript: () =&gt; RoundTranscript;
+}&gt;;
+export declare function replayRound(transcript: RoundTranscript, mechanism?: ProcurementMechanism): Promise&lt;{
+    splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+    spec: import("./types.ts").RoundSpec;
+    phase: string;
+    buyers: {
+        quantity: string;
+        budget: string;
+        buyerId: string;
+    }[];
+    quantity: string;
+    bids: {
+        sellerId: string;
+        commitment: string;
+        reveal: {
+            capacity: string;
+            unitPrice: string;
+            salt: string;
+        } | null;
+        rejection: string | null;
+    }[];
+    allocation: import("./types.ts").Allocation | null;
+}&gt;;
+export declare function settlementPlanFromTranscript(transcript: RoundTranscript, mechanism?: ProcurementMechanism): Promise&lt;import("./settlement.ts").SettlementPlan&gt;;
+export type RoundStore = {
+    read(roundId: string): Promise&lt;RoundTranscript | undefined&gt;;
+    compareAndSet(next: RoundTranscript, expectedRevision: number | null): Promise&lt;boolean&gt;;
+};
+export declare function openStoredRound(spec: RoundTranscript["spec"], store: RoundStore, clock?: () =&gt; number, mechanism?: ProcurementMechanism): Promise&lt;RoundTranscript&gt;;
+export declare function submitStoredRoundEvent(roundId: string, event: RoundCommand, store: RoundStore, clock?: () =&gt; number, mechanism?: ProcurementMechanism): Promise&lt;{
+    readonly status: "rejected";
+    readonly transcript?: undefined;
+} | {
+    readonly status: "conflict";
+    readonly transcript?: undefined;
+} | {
+    readonly status: "accepted";
+    readonly transcript: RoundTranscript;
+}&gt;;
+</code></pre></section><section class="api-module" id="round"><h2 id="round">round</h2><pre><code>import type { Allocation, Bid, Demand, RoundSpec } from "./types.ts";
+import type { ProcurementMechanism, SplitAllocation } from "./mechanism.ts";
+export type { Allocation, Bid, Demand, RoundSpec } from "./types.ts";
+export type RoundCommand = {
+    type: "demand";
+    buyerId: string;
+    request: Demand | null;
+} | {
+    type: "commitment";
+    sellerId: string;
+    hash: string;
+} | {
+    type: "reveal";
+    sellerId: string;
+    bid: Bid;
+};
+export type RoundEvent = RoundCommand &amp; {
+    at: number;
+};
+export type RoundTranscript = {
+    version: 1;
+    spec: RoundSpec;
+    events: readonly RoundEvent[];
+    observedAt: number;
+};
+export declare function commitBid(roundId: string, sellerId: string, bid: Bid): Promise&lt;string&gt;;
+export declare function createRound(input: RoundSpec, clock?: () =&gt; number, mechanism?: ProcurementMechanism): {
+    submitDemand: (buyerId: string, request: Demand | null) =&gt; boolean;
+    submitCommitment: (sellerId: string, hash: string) =&gt; boolean;
+    revealBid: (sellerId: string, bid: Bid) =&gt; Promise&lt;boolean&gt;;
+    snapshot: () =&gt; {
+        splitAllocation?: SplitAllocation | null | undefined;
+        spec: RoundSpec;
+        phase: string;
+        buyers: {
+            quantity: string;
+            budget: string;
+            buyerId: string;
+        }[];
+        quantity: string;
+        bids: {
+            sellerId: string;
+            commitment: string;
+            reveal: {
+                capacity: string;
+                unitPrice: string;
+                salt: string;
+            } | null;
+            rejection: string | null;
+        }[];
+        allocation: Allocation | null;
+    };
+    transcript: () =&gt; RoundTranscript;
+};
+export type RoundSnapshot = ReturnType&lt;ReturnType&lt;typeof createRound&gt;["snapshot"]&gt;;
+</code></pre></section><section class="api-module" id="session"><h2 id="session">session</h2><pre><code>import type { RoundSnapshot, RoundTranscript } from "./round.ts";
+import type { Bid } from "./types.ts";
+import type { SimulationOptions } from "./simulation.ts";
+/** Private simulation checkpoint. Contains unrevealed offers; never publish it. */
+export type SimulationSession = {
+    version: 1;
+    stage: "ready" | "demand" | "commit" | "reveal" | "closed";
+    randomState: number;
+    transcript: RoundTranscript;
+    sealedOffers: {
+        sellerId: string;
+        bid: Bid;
+        reveal: boolean;
+    }[];
+};
+/** Start an empty simulation. No strategies execute until advanceSimulation is called. */
+export declare function startSimulation(options: Pick&lt;SimulationOptions, "spec" | "seed" | "buyers" | "sellers" | "mechanism"&gt;): SimulationSession;
+/** Advance exactly one stage. Persist the returned checkpoint before calling again.
+ * Strategies must be side-effect-free: an uncommitted attempt may be retried.
+ * The supplied callbacks may be asynchronous; clocks are logical simulation time.
+ */
+export declare function advanceSimulation(input: SimulationSession, strategies: Pick&lt;SimulationOptions, "buyers" | "sellers" | "mechanism"&gt;): Promise&lt;SimulationSession&gt;;
+/** Explain the recorded outcome without claiming the heuristic proves infeasibility. */
+export declare function explainAllocation(snapshot: RoundSnapshot): {
+    outcome: "allocated" | "no-sale";
+    reason: string;
+    buyers: {
+        spent: string;
+        remainingBudget: string;
+        lines: (import("./mechanism.ts").FulfillmentLine &amp; {
+            unitPrice: string;
+            amount: string;
+        })[];
+        quantity: string;
+        budget: string;
+        buyerId: string;
+    }[];
+    sellers: {
+        sellerId: string;
+        reason: string;
+        quantity: string;
+    }[];
+};
+</code></pre></section><section class="api-module" id="settlement"><h2 id="settlement">settlement</h2><pre><code>import type { RoundSnapshot } from "./round.ts";
+export type Payment = {
+    id: string;
+    buyerId: string;
+    sellerId: string;
+    amount: string;
+};
+export type SettlementPlan = {
+    version: 1 | 2;
+    roundId: string;
+    asset: string;
+    payments: readonly Payment[];
+};
+export declare function paymentIdFor(version: SettlementPlan["version"], roundId: string, buyerId: string, sellerId: string): string;
+export type PaymentReceipt = {
+    paymentId: string;
+    status: "pending" | "confirmed" | "failed";
+};
+export declare function createSettlementPlan(round: RoundSnapshot): SettlementPlan;
+export declare function summarizeSettlement(plan: SettlementPlan, receipts: readonly PaymentReceipt[]): {
+    pending: string;
+    confirmed: string;
+    failed: string;
+    paid: boolean;
+};
+</code></pre></section><section class="api-module" id="simulation"><h2 id="simulation">simulation</h2><pre><code>import type { Bid, Demand, RoundSpec } from "./types.ts";
+import type { Payment, PaymentReceipt } from "./settlement.ts";
+import type { ProcurementMechanism } from "./mechanism.ts";
+type StrategyContext = {
+    resource: Readonly&lt;RoundSpec["resource"]&gt;;
+    asset: string;
+    random: () =&gt; number;
+};
+export type BuyerStrategy = {
+    id: string;
+    demand: (context: StrategyContext) =&gt; Demand | null | Promise&lt;Demand | null&gt;;
+};
+export type SellerStrategy = {
+    id: string;
+    offer: (context: StrategyContext &amp; {
+        pooledQuantity: string;
+    }) =&gt; Omit&lt;Bid, "salt"&gt; | null | Promise&lt;Omit&lt;Bid, "salt"&gt; | null&gt;;
+    reveal?: boolean;
+};
+export type SimulationOptions = {
+    spec: Omit&lt;RoundSpec, "buyers" | "sellers"&gt;;
+    seed: number;
+    mechanism?: ProcurementMechanism;
+    buyers: readonly BuyerStrategy[];
+    sellers: readonly SellerStrategy[];
+    paymentOutcome?: (payment: Readonly&lt;Payment&gt;) =&gt; PaymentReceipt["status"];
+};
+export declare function simulateProcurement(options: SimulationOptions): Promise&lt;{
+    mode: "simulation";
+    transcript: import("./round.ts").RoundTranscript;
+    stages: readonly [{
+        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+        spec: RoundSpec;
+        phase: string;
+        buyers: {
+            quantity: string;
+            budget: string;
+            buyerId: string;
+        }[];
+        quantity: string;
+        bids: {
+            sellerId: string;
+            commitment: string;
+            reveal: {
+                capacity: string;
+                unitPrice: string;
+                salt: string;
+            } | null;
+            rejection: string | null;
+        }[];
+        allocation: import("./types.ts").Allocation | null;
+    }, {
+        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+        spec: RoundSpec;
+        phase: string;
+        buyers: {
+            quantity: string;
+            budget: string;
+            buyerId: string;
+        }[];
+        quantity: string;
+        bids: {
+            sellerId: string;
+            commitment: string;
+            reveal: {
+                capacity: string;
+                unitPrice: string;
+                salt: string;
+            } | null;
+            rejection: string | null;
+        }[];
+        allocation: import("./types.ts").Allocation | null;
+    }, {
+        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+        spec: RoundSpec;
+        phase: string;
+        buyers: {
+            quantity: string;
+            budget: string;
+            buyerId: string;
+        }[];
+        quantity: string;
+        bids: {
+            sellerId: string;
+            commitment: string;
+            reveal: {
+                capacity: string;
+                unitPrice: string;
+                salt: string;
+            } | null;
+            rejection: string | null;
+        }[];
+        allocation: import("./types.ts").Allocation | null;
+    }, {
+        splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+        spec: RoundSpec;
+        phase: string;
+        buyers: {
+            quantity: string;
+            budget: string;
+            buyerId: string;
+        }[];
+        quantity: string;
+        bids: {
+            sellerId: string;
+            commitment: string;
+            reveal: {
+                capacity: string;
+                unitPrice: string;
+                salt: string;
+            } | null;
+            rejection: string | null;
+        }[];
+        allocation: import("./types.ts").Allocation | null;
+    }];
+    plan: import("./settlement.ts").SettlementPlan;
+    settlement: {
+        pending: string;
+        confirmed: string;
+        failed: string;
+        paid: boolean;
+    };
+    payments: {
+        buyerId: string;
+        amount: string;
+        status: "failed" | "pending" | "simulated";
+    }[];
+}&gt;;
+export {};
+</code></pre></section><section class="api-module" id="spending-policy"><h2 id="spending-policy">spending-policy</h2><pre><code>import type { Payment, SettlementPlan } from "./settlement.ts";
+import { executeSettlement } from "./execute.ts";
+export type SpendingPolicy = {
+    roundId: string;
+    buyerId: string;
+    asset: string;
+    transportScope: string;
+    sellers: readonly string[];
+    maxAmount: string;
+    expiresAt: number;
+};
+export declare function spendingPolicyMessage(policy: SpendingPolicy): Uint8Array&lt;ArrayBuffer&gt;;
+export declare function authorizeWithSpendingPolicies(input: SettlementPlan, transportScope: string, approvals: readonly {
+    policy: SpendingPolicy;
+    signature: Uint8Array;
+}[], resolveBuyerKey: (buyerId: string) =&gt; Promise&lt;Parameters&lt;typeof globalThis.crypto.subtle.verify&gt;[1] | undefined&gt;, clock?: () =&gt; number): Promise&lt;(payment: Readonly&lt;Payment&gt;) =&gt; boolean&gt;;
+export declare function executeWithSpendingPolicies(input: SettlementPlan, options: Omit&lt;Parameters&lt;typeof executeSettlement&gt;[1], "authorize"&gt; &amp; {
+    approvals: Parameters&lt;typeof authorizeWithSpendingPolicies&gt;[2];
+    resolveBuyerKey: Parameters&lt;typeof authorizeWithSpendingPolicies&gt;[3];
+    clock?: () =&gt; number;
+}): Promise&lt;{
+    receipts: (import("./settlement.ts").PaymentReceipt &amp; {
+        transactionHash?: string;
+        broadcastUncertain?: true;
+    })[];
+    summary: {
+        pending: string;
+        confirmed: string;
+        failed: string;
+        paid: boolean;
+    };
+}&gt;;
+</code></pre></section><section class="api-module" id="types"><h2 id="types">types</h2><pre><code>export type RoundSpec = {
+    id: string;
+    resource: {
+        label: string;
+        unit: string;
+        deliveryWindow: string;
+    };
+    asset: string;
+    mechanismId?: string;
+    buyers: readonly string[];
+    sellers: readonly string[];
+    demandCloses: number;
+    commitCloses: number;
+    revealCloses: number;
+};
+export type Demand = {
+    quantity: string;
+    budget: string;
+};
+export type Bid = {
+    capacity: string;
+    unitPrice: string;
+    salt: string;
+};
+export type Allocation = {
+    sellerId: string;
+    unitPrice: string;
+    total: string;
+    shares: {
+        buyerId: string;
+        quantity: string;
+        amount: string;
+    }[];
+};
+</code></pre></section><nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../agents/">Connect an independent agent ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#public-entry-point">Public entry point</a><a href="#index">index</a><a href="#audit">audit</a><a href="#execute">execute</a><a href="#mechanism">mechanism</a><a href="#near-intents-transport">near-intents-transport</a><a href="#near-testnet">near-testnet</a><a href="#near">near</a><a href="#replay">replay</a><a href="#round">round</a><a href="#session">session</a><a href="#settlement">settlement</a><a href="#simulation">simulation</a><a href="#spending-policy">spending-policy</a><a href="#types">types</a></aside>
   </main>
   <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
-</body>
+<script src="../docs.js" defer></script></body>
 </html>

@@ -1,0 +1,162 @@
+{
+  "network": "testnet",
+  "validatedAt": "2026-11-14T13:07:51.928Z",
+  "execution": "native-testnet",
+  "audit": {
+    "plan": {
+      "version": 2,
+      "roundId": "swarmkit-f059f59625bd.testnet",
+      "asset": "near:testnet:native",
+      "payments": [
+        {
+          "id": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-1.swarmkit-f059f59625bd.testnet\"]",
+          "buyerId": "buyer-1.swarmkit-f059f59625bd.testnet",
+          "sellerId": "seller-1.swarmkit-f059f59625bd.testnet",
+          "amount": "600000000000000000000"
+        },
+        {
+          "id": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-2.swarmkit-f059f59625bd.testnet\"]",
+          "buyerId": "buyer-1.swarmkit-f059f59625bd.testnet",
+          "sellerId": "seller-2.swarmkit-f059f59625bd.testnet",
+          "amount": "800000000000000000000"
+        }
+      ]
+    },
+    "claimedSummary": {
+      "pending": "0",
+      "confirmed": "1400000000000000000000",
+      "failed": "0",
+      "paid": true
+    },
+    "verifiedSummary": {
+      "pending": "0",
+      "confirmed": "1400000000000000000000",
+      "failed": "0",
+      "paid": true
+    },
+    "checks": [
+      {
+        "paymentId": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-1.swarmkit-f059f59625bd.testnet\"]",
+        "transactionHash": "5fo7YBXAhgM5Ar7sGEQgohDoQeZHzrwpFJUeVfbLp9fY",
+        "claimed": "confirmed",
+        "observed": "confirmed",
+        "matches": true
+      },
+      {
+        "paymentId": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-2.swarmkit-f059f59625bd.testnet\"]",
+        "transactionHash": "45diCCuBhfCzxMrbJUxfNwagrQa8ntkmgw63cKQ4S5Di",
+        "claimed": "confirmed",
+        "observed": "confirmed",
+        "matches": true
+      }
+    ]
+  },
+  "sellerIds": [
+    "seller-1.swarmkit-f059f59625bd.testnet",
+    "seller-2.swarmkit-f059f59625bd.testnet"
+  ],
+  "transcript": {
+    "version": 1,
+    "spec": {
+      "id": "swarmkit-f059f59625bd.testnet",
+      "mechanismId": "cheapest-capacity-v1",
+      "resource": {
+        "label": "NVIDIA H100",
+        "unit": "GPU hour",
+        "deliveryWindow": "Next available 24-hour block"
+      },
+      "asset": "near:testnet:native",
+      "demandCloses": 10,
+      "commitCloses": 20,
+      "revealCloses": 30,
+      "buyers": [
+        "buyer-1.swarmkit-f059f59625bd.testnet"
+      ],
+      "sellers": [
+        "seller-1.swarmkit-f059f59625bd.testnet",
+        "seller-2.swarmkit-f059f59625bd.testnet"
+      ]
+    },
+    "events": [
+      {
+        "type": "demand",
+        "at": 9,
+        "buyerId": "buyer-1.swarmkit-f059f59625bd.testnet",
+        "request": {
+          "quantity": "5",
+          "budget": "1400000000000000000000"
+        }
+      },
+      {
+        "type": "commitment",
+        "at": 10,
+        "sellerId": "seller-1.swarmkit-f059f59625bd.testnet",
+        "hash": "d28ffb488a7507032216df83dd1faba06cebd881179f2295c750f1a68f4d8475"
+      },
+      {
+        "type": "commitment",
+        "at": 10,
+        "sellerId": "seller-2.swarmkit-f059f59625bd.testnet",
+        "hash": "bb99e8fb73052321d197b8456113add9d807829e8c170d4d0c6cbf62ac5d5e45"
+      },
+      {
+        "type": "reveal",
+        "at": 20,
+        "sellerId": "seller-1.swarmkit-f059f59625bd.testnet",
+        "bid": {
+          "capacity": "3",
+          "unitPrice": "200000000000000000000",
+          "salt": "057096410b5d7aac09dab61ba9bbf4bea50c15057be902a09fefd57fc41464d2"
+        }
+      },
+      {
+        "type": "reveal",
+        "at": 20,
+        "sellerId": "seller-2.swarmkit-f059f59625bd.testnet",
+        "bid": {
+          "capacity": "2",
+          "unitPrice": "400000000000000000000",
+          "salt": "2a25be09f8f22fd40b7dd9232ac1ec26bc15154d4482b64898bae507d2dc5eba"
+        }
+      }
+    ],
+    "observedAt": 30
+  },
+  "plan": {
+    "version": 2,
+    "roundId": "swarmkit-f059f59625bd.testnet",
+    "asset": "near:testnet:native",
+    "payments": [
+      {
+        "id": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-1.swarmkit-f059f59625bd.testnet\"]",
+        "buyerId": "buyer-1.swarmkit-f059f59625bd.testnet",
+        "sellerId": "seller-1.swarmkit-f059f59625bd.testnet",
+        "amount": "600000000000000000000"
+      },
+      {
+        "id": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-2.swarmkit-f059f59625bd.testnet\"]",
+        "buyerId": "buyer-1.swarmkit-f059f59625bd.testnet",
+        "sellerId": "seller-2.swarmkit-f059f59625bd.testnet",
+        "amount": "800000000000000000000"
+      }
+    ]
+  },
+  "receipts": [
+    {
+      "paymentId": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-1.swarmkit-f059f59625bd.testnet\"]",
+      "status": "confirmed",
+      "transactionHash": "5fo7YBXAhgM5Ar7sGEQgohDoQeZHzrwpFJUeVfbLp9fY"
+    },
+    {
+      "paymentId": "[\"swarmkit-f059f59625bd.testnet\",\"buyer-1.swarmkit-f059f59625bd.testnet\",\"seller-2.swarmkit-f059f59625bd.testnet\"]",
+      "status": "confirmed",
+      "transactionHash": "45diCCuBhfCzxMrbJUxfNwagrQa8ntkmgw63cKQ4S5Di"
+    }
+  ],
+  "summary": {
+    "pending": "0",
+    "confirmed": "1400000000000000000000",
+    "failed": "0",
+    "paid": true
+  }
+}

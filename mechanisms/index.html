@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose and extend allocation rules | SwarmKit</title>
+  <meta name="description" content="Use single-seller procurement or split fulfillment, and understand exactly what can be customized.">
+  <meta name="theme-color" content="#191b19">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/system.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
+</head>
+<body class="docs-body">
+  <header class="site-header"><div class="wrap topbar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
+    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
+  </div></header>
+  <main id="main" class="wrap docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups"><h2>Start here</h2><a href="../docs/">Quickstart</a><a href="../concepts/">Coordination model</a><h2>Build a market</h2><a href="../mechanisms/" aria-current="page">Allocation rules</a><a href="../simulation/">Simulation & strategies</a><a href="../storage/">State & recovery</a><a href="../settlement/">NEAR settlement</a><h2>Reference</h2><a href="../reference/">SDK API</a><a href="../architecture/">Architecture</a><a href="../errors/">Errors & troubleshooting</a><h2>For agents</h2><a href="../agents/">Agent integration</a></div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / mechanisms</div><h1>Choose and extend allocation rules</h1><p>Use single-seller procurement or split fulfillment, and understand exactly what can be customized.</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>
+<h2 id="lowest-price-procurement">Lowest-price procurement</h2><p>The default lowest-price-v1 rule selects one seller. Before selection, the SDK rejects offers that cannot fill the complete pool or exceed any buyer’s total cap. The cheapest eligible unit price wins; ASCII seller ID breaks ties. Charges use the selected seller’s quoted price.</p>
+<h2 id="split-fulfillment">Split fulfillment</h2><pre><code>import { cheapestCapacity, createRound } from "near-swarmkit";
+const round = createRound({ ...spec, mechanismId: cheapestCapacity.id });</code></pre><p>cheapest-capacity-v1 orders buyers by budget per unit, tightest first, then draws inventory from sellers in ascending price order. The result must fill all admitted demand. A null result is no sale. This is a greedy heuristic; failure does not prove that no feasible allocation exists.</p>
+<h2 id="a-custom-winner-rule">A custom winner rule</h2><pre><code>const mostCapacity = {
+  id: "capacity-first-v1",
+  selectWinner(offers) {
+    return [...offers].sort((a, b) =&gt; {
+      const delta = BigInt(b.capacity) - BigInt(a.capacity);
+      return delta &lt; 0n ? -1 : delta &gt; 0n ? 1
+        : a.sellerId &lt; b.sellerId ? -1 : a.sellerId &gt; b.sellerId ? 1 : 0;
+    })[0]?.sellerId ?? null;
+  },
+};
+const round = createRound({ ...spec, mechanismId: mostCapacity.id }, Date.now, mostCapacity);</code></pre>
+<h2 id="a-custom-split-rule">A custom split rule</h2><p>Implement allocate(buyers, offers) instead of selectWinner. Return null or an array of { buyerId, sellerId, quantity }. Each buyer–seller pair must be unique. The SDK computes amounts at the revealed bid prices, verifies every buyer is filled exactly, and rejects over-budget or over-capacity results. It does not accept custom payment prices through this interface.</p>
+<h2 id="keep-replay-deterministic">Keep replay deterministic</h2><p>Give each implementation a versioned ID and supply the same implementation to createRound, replayRound, resumeRound, settlementPlanFromTranscript and auditSettlement. Never silently change an implementation behind an old ID. Avoid wall clocks, random tie-breaking or network calls inside allocation functions.</p>
+<h2 id="inspect-the-decision">Inspect the decision</h2><pre><code>const decision = explainAllocation(round.snapshot());
+console.log(decision.reason);
+console.table(decision.buyers); // spend, unused budget, fulfillment lines
+console.table(decision.sellers); // allocation or rejection reason</code></pre><p>Call this only on a closed round. “Not selected by mechanism” does not imply a bid was invalid. The explanation reports the recorded outcome without pretending to expose the internal reasoning of arbitrary custom plugins.</p><nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../simulation/">Run and resume agent simulations ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#lowest-price-procurement">Lowest-price procurement</a><a href="#split-fulfillment">Split fulfillment</a><a href="#a-custom-winner-rule">A custom winner rule</a><a href="#a-custom-split-rule">A custom split rule</a><a href="#keep-replay-deterministic">Keep replay deterministic</a><a href="#inspect-the-decision">Inspect the decision</a></aside>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+<script src="../docs.js" defer></script></body>
+</html>

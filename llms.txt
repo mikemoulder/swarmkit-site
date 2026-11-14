@@ -1,20 +1,17 @@
 # SwarmKit
 
-> TypeScript SDK for coordinating agent procurement on NEAR. The npm package is near-swarmkit.
+TypeScript SDK for procurement and agent coordination on NEAR. Package: near-swarmkit.
 
-## Documentation
+- [Run your first market](https://mikemoulder.github.io/swarmkit-site/docs/)
+- [SDK reference](https://mikemoulder.github.io/swarmkit-site/reference/)
+- [Connect an independent agent](https://mikemoulder.github.io/swarmkit-site/agents/)
+- [Understand the coordination model](https://mikemoulder.github.io/swarmkit-site/concepts/)
+- [Choose and extend allocation rules](https://mikemoulder.github.io/swarmkit-site/mechanisms/)
+- [Run and resume agent simulations](https://mikemoulder.github.io/swarmkit-site/simulation/)
+- [Persist rounds and payment journals](https://mikemoulder.github.io/swarmkit-site/storage/)
+- [Authorize and recover NEAR settlement](https://mikemoulder.github.io/swarmkit-site/settlement/)
+- [Architecture and market rules](https://mikemoulder.github.io/swarmkit-site/architecture/)
+- [Diagnose failures without losing state](https://mikemoulder.github.io/swarmkit-site/errors/)
+- [Full documentation](https://mikemoulder.github.io/swarmkit-site/llms-full.txt)
 
-- [Quickstart](https://mikemoulder.github.io/swarmkit-site/docs/): run a complete sealed-bid round with scripted agents.
-- [SDK reference](https://mikemoulder.github.io/swarmkit-site/reference/): coordination, replay, storage, authorization and settlement exports.
-- [Agent guide](https://mikemoulder.github.io/swarmkit-site/agents/): participant identity, spending policies and NEAR Intents.
-- [Core repository](https://github.com/mikemoulder/swarmkit): SDK source, examples and verified testnet evidence.
-- [SwarmKit Market](https://mikemoulder.github.io/swarmkit-market/): standalone market demonstration.
-
-## Integration facts
-
-- Node 22.18 or newer. ESM JavaScript and TypeScript declarations.
-- Use canonical integer strings for quantities and monetary amounts.
-- The application authenticates participants and supplies keys and durable stores.
-- Pin custom allocation rules to their versioned IDs for transcript replay.
-- Bind split payment plans atomically before sending. Reuse the stored signed bytes and hash on an ambiguous retry.
-- Simulation receipts are synthetic. The Intents adapter works with supported Verifier token balances and requires buyer and relayer signers.
+Use canonical integer strings. Authenticate actors outside the SDK. Keep checkpoints and signing keys private. Never raise spending caps without buyer authorization. Distinguish simulation, native testnet transfers and actual Intents execution.

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Run and resume agent simulations | SwarmKit</title>
+  <meta name="description" content="Execute policies one stage at a time and keep a private checkpoint across restarts.">
+  <meta name="theme-color" content="#191b19">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/system.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
+</head>
+<body class="docs-body">
+  <header class="site-header"><div class="wrap topbar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
+    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
+  </div></header>
+  <main id="main" class="wrap docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups"><h2>Start here</h2><a href="../docs/">Quickstart</a><a href="../concepts/">Coordination model</a><h2>Build a market</h2><a href="../mechanisms/">Allocation rules</a><a href="../simulation/" aria-current="page">Simulation & strategies</a><a href="../storage/">State & recovery</a><a href="../settlement/">NEAR settlement</a><h2>Reference</h2><a href="../reference/">SDK API</a><a href="../architecture/">Architecture</a><a href="../errors/">Errors & troubleshooting</a><h2>For agents</h2><a href="../agents/">Agent integration</a></div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / simulation</div><h1>Run and resume agent simulations</h1><p>Execute policies one stage at a time and keep a private checkpoint across restarts.</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>
+<h2 id="two-execution-styles">Two execution styles</h2><p>simulateProcurement runs a complete deterministic round and returns its stage snapshots, transcript, payment plan and synthetic receipts. Use it for unit tests and experiments. startSimulation creates an empty checkpoint; advanceSimulation executes exactly one stage. Use the incremental API for a scheduler or interactive reference application.</p>
+<pre><code>import { startSimulation, advanceSimulation, replayRound } from "near-swarmkit";
+let checkpoint = startSimulation(options); // no callbacks invoked
+checkpoint = await advanceSimulation(checkpoint, options); // buyer demands
+checkpoint = await advanceSimulation(checkpoint, options); // seller commitments
+// Persist checkpoint atomically before progressing.
+checkpoint = await advanceSimulation(checkpoint, options); // reveals
+checkpoint = await advanceSimulation(checkpoint, options); // closed allocation
+const publicSnapshot = await replayRound(checkpoint.transcript);</code></pre>
+<h2 id="asynchronous-policies">Asynchronous policies</h2><p>Buyer demand and seller offer callbacks may return promises. A seller sees the pooled quantity; both receive the resource, asset and seeded random function. Policies may close over application history, balances or inventory. Keep them free of external side effects: if a host crashes before committing the returned checkpoint, a callback can run again. Hosts should impose timeouts and cancellation around external computations.</p>
+<h2 id="private-checkpoints-public-transcripts">Private checkpoints, public transcripts</h2><p>A SimulationSession includes unrevealed seller offers. It is trusted private state, not an interchange format to accept from strangers. Publish only its transcript or replayed snapshot. The built-in simulation salts are deterministic and must not be used for live hidden bids.</p>
+<h2 id="a-working-economy">A working economy</h2><p>The Market reference applies the SDK to 20 GPU buyers and five sellers, or a smaller inference market. It maintains inventory, work consumption, earned income, replenishment costs and utilization-based seller quotes. The same controller runs against IndexedDB in the browser and SQLite in the local service. The tests kill a process after recording a simulated broadcast and recover it in a new process.</p>
+<pre><code>git clone https://github.com/mikemoulder/swarmkit-market
+cd swarmkit-market
+npm ci
+npm test
+npm run experiment -- 12
+npm run build
+npm run serve</code></pre><p>All these economy runs are simulation. Synthetic receipts and synthetic buyer approvals cannot move real funds. The experiment retains its SQLite database across invocations; use a new database path as the second argument for an independent run.</p>
+<h2 id="runnable-example">Runnable example</h2><p><a href="../examples/incremental-market.mjs">Download incremental-market.mjs</a>. Run it from a project with near-swarmkit installed. It demonstrates serialization and async policies; the reference application supplies actual durable storage.</p><nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../storage/">Persist rounds and payment journals ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#two-execution-styles">Two execution styles</a><a href="#asynchronous-policies">Asynchronous policies</a><a href="#private-checkpoints-public-transcripts">Private checkpoints, public transcripts</a><a href="#a-working-economy">A working economy</a><a href="#runnable-example">Runnable example</a></aside>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+<script src="../docs.js" defer></script></body>
+</html>

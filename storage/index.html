@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Persist rounds and payment journals | SwarmKit</title>
+  <meta name="description" content="Choose atomic storage semantics that survive concurrent writers and process restarts.">
+  <meta name="theme-color" content="#191b19">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/system.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
+</head>
+<body class="docs-body">
+  <header class="site-header"><div class="wrap topbar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
+    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
+  </div></header>
+  <main id="main" class="wrap docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups"><h2>Start here</h2><a href="../docs/">Quickstart</a><a href="../concepts/">Coordination model</a><h2>Build a market</h2><a href="../mechanisms/">Allocation rules</a><a href="../simulation/">Simulation & strategies</a><a href="../storage/" aria-current="page">State & recovery</a><a href="../settlement/">NEAR settlement</a><h2>Reference</h2><a href="../reference/">SDK API</a><a href="../architecture/">Architecture</a><a href="../errors/">Errors & troubleshooting</a><h2>For agents</h2><a href="../agents/">Agent integration</a></div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / storage</div><h1>Persist rounds and payment journals</h1><p>Choose atomic storage semantics that survive concurrent writers and process restarts.</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>
+<h2 id="roundstore">RoundStore</h2><pre><code>type RoundStore = {
+  read(roundId: string): Promise&lt;RoundTranscript | undefined&gt;;
+  compareAndSet(next: RoundTranscript, expectedRevision: number | null): Promise&lt;boolean&gt;;
+};</code></pre><p>The revision is the number of accepted events. null means “insert only if absent.” A non-null revision means “update only if the stored event count still matches.” Do not implement this as a separate read followed by an unconditional write.</p>
+<pre><code>const store = sqliteRoundStore("./rounds.sqlite");
+await openStoredRound(spec, store);
+const result = await submitStoredRoundEvent(spec.id, {
+  type: "demand", buyerId: authenticatedBuyerId,
+  request: { quantity: "2", budget: "10" },
+}, store);
+if (result.status === "conflict") {
+  // Read the current round, recheck its phase, then decide whether to retry.
+}</code></pre><p><a href="../examples/sqlite-round-store.mjs">The complete SQLite adapter</a> uses an atomic conditional UPDATE, WAL and FULL synchronization. Node 22.18’s built-in SQLite API is experimental. Applications may implement the same interface with another database.</p>
+<h2 id="settlementjournal">SettlementJournal</h2><p>read retrieves a payment entry. reserve atomically inserts a candidate if absent and returns the existing winner otherwise. The entry contains the payment and signed bytes/hash. bindPlan atomically stores or matches the complete plan fingerprint. Split settlement requires bindPlan; its absence is an error.</p>
+<pre><code>const journal = {
+  read: async scope =&gt; loadEntry(scope),
+  reserve: async (scope, candidate) =&gt; insertOrReadAtomically(scope, candidate),
+  bindPlan: async (scope, fingerprint) =&gt; insertOrCompareAtomically(scope, fingerprint),
+};</code></pre><p>The snippet states the required adapter contract; loadEntry and the two atomic functions are your database operations, not SDK exports. The reference market contains implemented IndexedDB and SQLite stores and a durable simulation journal. Its Intents CLI contains a separate file journal for live execution.</p>
+<h2 id="order-of-durability">Order of durability</h2><ol><li>Freeze the allocation and bind the payment plan.</li><li>Authorize, prepare the transaction and durably reserve its signed bytes.</li><li>Inspect the stored hash, then broadcast only those bytes if allowed.</li><li>Record finalized receipts and apply application ledger changes once per payment ID.</li></ol><p>A transport exception must not cause you to discard the journal and prepare a replacement. A pending transaction can already have been broadcast. Reconcile it first. Independent payments can settle partially.</p>
+<h2 id="storage-ownership">Storage ownership</h2><p>Keep one trusted storage namespace per environment. Protect journals like credentials: their signed bytes may still be broadcastable. Browser simulation storage is suitable for synthetic activity, not for custody of live keys. Use unique round IDs and retain the journal for recovery.</p><nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../settlement/">Authorize and recover NEAR settlement ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#roundstore">RoundStore</a><a href="#settlementjournal">SettlementJournal</a><a href="#order-of-durability">Order of durability</a><a href="#storage-ownership">Storage ownership</a></aside>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+<script src="../docs.js" defer></script></body>
+</html>

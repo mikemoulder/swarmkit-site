@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile, readdir, copyFile } from "node:fs/promises";
+import { guidePages } from "./guides.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -8,6 +9,9 @@ const links = [
   ["SDK reference", "../reference/"],
   ["Agent guide", "../agents/"],
 ];
+for (const [slug, title] of guidePages) {
+  if (!links.some(([, href]) => href === `../${slug}/`)) links.push([title, `../${slug}/`]);
+}
 const pages = [
   ["docs", "Run your first market", "Build a sealed-bid round with two buyers and two sellers. Run it locally with Node 22.18 or newer.", `
     <h2>Install the SDK</h2>
@@ -86,9 +90,39 @@ const seller = {
 const sample = await readFile(join(root, "examples", "quickstart.mjs"), "utf8");
 const escapeHtml = (value) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
+const sdkArg = process.argv.indexOf('--sdk');
+const declarations = join(root, 'sdk-reference');
+await mkdir(declarations, { recursive: true });
+if (sdkArg !== -1) {
+  const source = join(root, process.argv[sdkArg + 1]);
+  for (const file of await readdir(source)) if (file.endsWith('.d.ts')) await copyFile(join(source, file), join(declarations, file));
+  await mkdir(join(root, 'assets', 'sdk'), { recursive: true });
+  for (const file of await readdir(source)) if (file.endsWith('.js')) await copyFile(join(source,file), join(root,'assets','sdk',file));
+  for (const file of ['incremental-market.mjs', 'sqlite-round-store.mjs', 'agent-service.mjs']) {
+    await copyFile(join(source, 'examples', file), join(root, 'examples', file));
+  }
+}
+for (const page of guidePages) {
+  const index = pages.findIndex(([slug]) => slug === page[0]);
+  if (index === -1) pages.push(page); else pages[index] = page;
+}
+const declarationFiles = (await readdir(declarations)).filter(file => file.endsWith('.d.ts')).sort();
+if (!declarationFiles.length) throw new Error('Generate the SDK reference with --sdk <compiled SDK directory>');
+pages[pages.findIndex(([slug]) => slug === 'reference')] = ['reference', 'SDK reference', 'TypeScript contracts generated from the packaged SDK declarations.',
+  '<h2>Public entry point</h2><p>Import public symbols from near-swarmkit. The index below lists the public exports; module declarations provide their full types. Supporting internal types are shown for context and are not separate package entry points.</p>' +
+  (await Promise.all(['index.d.ts', ...declarationFiles.filter(f => f !== 'index.d.ts')].map(async file =>
+    `<section class="api-module" id="${file.replace('.d.ts','')}"><h2>${escapeHtml(file.replace('.d.ts',''))}</h2><pre><code>${escapeHtml(await readFile(join(declarations,file),'utf8'))}</code></pre></section>`))).join('')];
+
+for (const page of pages) page[3] = page[3].replace('id="quickstart"></code>', `id="quickstart">${escapeHtml(sample.trimEnd())}</code>`);
 for (const [slug, title, description, body] of pages) {
-  const navigation = links.map(([label, href]) =>
-    `<a href="${href}"${href === `../${slug}/` ? ' aria-current="page"' : ""}>${label}</a>`).join("");
+  const groups = [ ['Start here', [['Quickstart','docs'],['Coordination model','concepts']]],
+    ['Build a market', [['Allocation rules','mechanisms'],['Simulation & strategies','simulation'],['State & recovery','storage'],['NEAR settlement','settlement']]],
+    ['Reference', [['SDK API','reference'],['Architecture','architecture'],['Errors & troubleshooting','errors']]],
+    ['For agents', [['Agent integration','agents']]] ];
+  const navigation = groups.map(([group,items])=>`<h2>${group}</h2>`+items.map(([label,path])=>`<a href="../${path}/"${path===slug?' aria-current="page"':''}>${label}</a>`).join('')).join('');
+  const headings=[];
+  const indexedBody=body.replace(/<h2>(.*?)<\/h2>/g,(_,label)=>{const id=label.replace(/<[^>]*>/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');headings.push([id,label]);return `<h2 id="${id}">${label}</h2>`;});
+  const pageIndex=pages.findIndex(p=>p[0]===slug),next=pages[(pageIndex+1)%pages.length];
   const html = `<!doctype html>
 <html lang="en" data-type="software" data-radius="sharp">
 <head>
@@ -96,27 +130,33 @@ for (const [slug, title, description, body] of pages) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title} | SwarmKit</title>
   <meta name="description" content="${description}">
-  <meta name="theme-color" content="#0a0d14">
+  <meta name="theme-color" content="#191b19">
   <meta name="page-type" content="software">
   <meta name="site-kind" content="software">
   <link rel="icon" href="../icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/system.css">
-  <link rel="stylesheet" href="../site.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
 </head>
 <body class="docs-body">
   <header class="site-header"><div class="wrap topbar">
     <a class="skip-link" href="#main">Skip to content</a>
-    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">✳</span> SwarmKit</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
     <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
   </div></header>
   <main id="main" class="wrap docs-layout">
-    <nav class="docs-nav" aria-label="Documentation">${navigation}</nav>
-    <article class="docs-content"><h1>${title}</h1><p>${description}</p>${body.replace('id="quickstart"></code>', `id="quickstart">${escapeHtml(sample.trimEnd())}</code>`)}</article>
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups">${navigation}</div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / ${slug==='docs'?'Quickstart':slug}</div><h1>${title}</h1><p>${description}</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>${indexedBody}<nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../${next[0]}/">${next[1]} ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2>${headings.map(([id,label])=>`<a href="#${id}">${label}</a>`).join('')}</aside>
   </main>
   <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
-</body>
+<script src="../docs.js" defer></script></body>
 </html>
 `;
   await mkdir(join(root, slug), { recursive: true });
   await writeFile(join(root, slug, "index.html"), html);
 }
+
+const plain = value => value.replace(/<[^>]*>/g,' ').replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&amp;','&').replace(/[ \t]+/g,' ');
+await writeFile(join(root,'search-index.json'), JSON.stringify(pages.map(([slug,title,description,body]) => ({ slug,title,description,text:plain(body) }))));
+await writeFile(join(root,'llms-full.txt'), pages.map(([slug,title,description,body]) => `# ${title}\nhttps://mikemoulder.github.io/swarmkit-site/${slug}/\n${description}\n${plain(body)}\n`).join('\n'));
+await writeFile(join(root,'llms.txt'), '# SwarmKit\n\nTypeScript SDK for procurement and agent coordination on NEAR. Package: near-swarmkit.\n\n' + pages.map(([slug,title])=>`- [${title}](https://mikemoulder.github.io/swarmkit-site/${slug}/)`).join('\n') + '\n- [Full documentation](https://mikemoulder.github.io/swarmkit-site/llms-full.txt)\n\nUse canonical integer strings. Authenticate actors outside the SDK. Keep checkpoints and signing keys private. Never raise spending caps without buyer authorization. Distinguish simulation, native testnet transfers and actual Intents execution.\n');

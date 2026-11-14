@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnose failures without losing state | SwarmKit</title>
+  <meta name="description" content="Use the failure boundary to decide whether to retry, reconcile or correct configuration.">
+  <meta name="theme-color" content="#191b19">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/system.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
+</head>
+<body class="docs-body">
+  <header class="site-header"><div class="wrap topbar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
+    <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
+  </div></header>
+  <main id="main" class="wrap docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups"><h2>Start here</h2><a href="../docs/">Quickstart</a><a href="../concepts/">Coordination model</a><h2>Build a market</h2><a href="../mechanisms/">Allocation rules</a><a href="../simulation/">Simulation & strategies</a><a href="../storage/">State & recovery</a><a href="../settlement/">NEAR settlement</a><h2>Reference</h2><a href="../reference/">SDK API</a><a href="../architecture/">Architecture</a><a href="../errors/" aria-current="page">Errors & troubleshooting</a><h2>For agents</h2><a href="../agents/">Agent integration</a></div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / errors</div><h1>Diagnose failures without losing state</h1><p>Use the failure boundary to decide whether to retry, reconcile or correct configuration.</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>
+<h2 id="round-commands">Round commands</h2><p>Direct coordinator methods return false for rejected submissions. The stored coordinator returns accepted, rejected or conflict. Invalid configuration, backwards clocks, invalid replay and invalid plugin outputs throw errors. There is no stable exported error-code enum yet; do not build critical recovery logic around matching message strings.</p>
+<h2 id="allocation">Allocation</h2><p>A no-sale result is a valid economic outcome. Inspect missing reveals, capacity, buyer caps and the selected mechanism. The split heuristic can return null without proving infeasibility. Never increase buyer authorization simply to force a sale.</p>
+<h2 id="storage-conflict">Storage conflict</h2><p>Re-read the latest state, revalidate the phase and reconstruct the intended command. Do not retry an unconditional write. A failed persistence operation must prevent progress to the next execution step.</p>
+<h2 id="settlement-uncertainty">Settlement uncertainty</h2><p>Keep the same journal, transport scope, round ID and relayer. A broadcast exception can mean the request succeeded but the response was lost. Reconcile the saved transaction hash. A mismatch between a finalized transfer and the approved payment is an error requiring investigation, not a retry signal.</p>
+<h2 id="rpc-failures">RPC failures</h2><p>The testnet adapter bounds HTTP 429 retries. The Intents adapter currently has request timeouts but no automatic HTTP 429 retry loop. Hosts should surface RPC errors and schedule bounded reconciliation attempts. Signer callback correctness and durable storage remain application responsibilities.</p>
+<h2 id="browser-storage">Browser storage</h2><p>The Market requires IndexedDB and Web Locks on HTTPS or localhost. If storage is unavailable, it displays an error instead of silently using volatile memory. Clearing site data removes the local simulation. Exported public records contain transcripts and receipt claims, not the private checkpoint needed to resume sealed offers.</p><nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../docs/">Run your first market ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#round-commands">Round commands</a><a href="#allocation">Allocation</a><a href="#storage-conflict">Storage conflict</a><a href="#settlement-uncertainty">Settlement uncertainty</a><a href="#rpc-failures">RPC failures</a><a href="#browser-storage">Browser storage</a></aside>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
+<script src="../docs.js" defer></script></body>
+</html>

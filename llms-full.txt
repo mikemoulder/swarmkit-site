@@ -1,0 +1,814 @@
+# Run your first market
+https://mikemoulder.github.io/swarmkit-site/docs/
+Build a sealed-bid round with two buyers and two sellers. Run it locally with Node 22.18 or newer.
+
+ Install the SDK 
+ Run npm ci and npm run pack:sdk in the SDK repository . Install the resulting tarball in your Node project. The package name is near-swarmkit . 
+ npm install /path/to/near-swarmkit-0.1.0.tgz 
+ Pool inference demand 
+ Save this as market.mjs and run node market.mjs . Use integer strings for quantity and amounts. 
+ import { simulateProcurement } from "near-swarmkit";
+
+const { plan } = await simulateProcurement({
+ seed: 42,
+ spec: {
+ id: "inference-credits-01",
+ resource: { label: "Inference credits", unit: "credit", deliveryWindow: "Today" },
+ asset: "demo-credits",
+ demandCloses: 10,
+ commitCloses: 20,
+ revealCloses: 30,
+ },
+ buyers: [
+ { id: "research", demand: () => ({ quantity: "3", budget: "15" }) },
+ { id: "indexer", demand: () => ({ quantity: "2", budget: "10" }) },
+ ],
+ sellers: [
+ { id: "fastlane", offer: () => ({ capacity: "4", unitPrice: "3" }) },
+ { id: "northstar", offer: () => ({ capacity: "5", unitPrice: "4" }) },
+ ],
+});
+
+console.log(plan.payments.map(({ buyerId, amount }) => [buyerId, amount])); 
+ The first offer is cheaper but covers only four credits. The second seller clears all five. Research owes 12 credits and Indexer owes eight. 
+ Follow a round into settlement 
+ 
+ createRound accepts buyer demand and seller commitments and reveals. 
+ settlementPlanFromTranscript replays the recorded inputs and derives exact buyer payments. 
+ executeWithSpendingPolicies checks buyer-signed approvals before a settlement transport can send. 
+ auditSettlement compares receipt claims against an optional read-only verifier. 
+ 
+ Read the SDK reference 
+
+# SDK reference
+https://mikemoulder.github.io/swarmkit-site/reference/
+TypeScript contracts generated from the packaged SDK declarations.
+ Public entry point Import public symbols from near-swarmkit. The index below lists the public exports; module declarations provide their full types. Supporting internal types are shown for context and are not separate package entry points. index export { commitBid, createRound } from "./round.ts";
+export type { Allocation, Bid, Demand, RoundSnapshot, RoundSpec } from "./round.ts";
+export type { RoundCommand, RoundEvent, RoundTranscript } from "./round.ts";
+export { cheapestCapacity, lowestPrice } from "./mechanism.ts";
+export type { EligibleOffer, FulfillmentLine, ProcurementMechanism, SplitAllocation } from "./mechanism.ts";
+export { openStoredRound, replayRound, resumeRound, settlementPlanFromTranscript, submitStoredRoundEvent, } from "./replay.ts";
+export type { RoundStore } from "./replay.ts";
+export { simulateProcurement } from "./simulation.ts";
+export type { BuyerStrategy, SellerStrategy, SimulationOptions } from "./simulation.ts";
+export { createSettlementPlan, summarizeSettlement } from "./settlement.ts";
+export type { Payment, PaymentReceipt, SettlementPlan } from "./settlement.ts";
+export { INTENTS_VERIFIER, nearIntentsExecutionCall, planNearSubaccounts, prepareNearIntentsTransfers, readNearIntentsSalt, signNearIntentsTransfers, } from "./near.ts";
+export type { NearIntentSigningRequest } from "./near.ts";
+export { executeSettlement } from "./execute.ts";
+export type { SignedPayment, SettlementEntry, SettlementJournal, SettlementTransport } from "./execute.ts";
+export { NATIVE_TESTNET_NEAR, nearTestnetTransport } from "./near-testnet.ts";
+export { nearIntentsTransport } from "./near-intents-transport.ts";
+export { auditSettlement } from "./audit.ts";
+export type { ReceiptClaim } from "./audit.ts";
+export { authorizeWithSpendingPolicies, executeWithSpendingPolicies, spendingPolicyMessage } from "./spending-policy.ts";
+export type { SpendingPolicy } from "./spending-policy.ts";
+export { startSimulation, advanceSimulation, explainAllocation } from "./session.ts";
+export type { SimulationSession } from "./session.ts";
+ audit import type { PaymentReceipt } from "./settlement.ts";
+import type { RoundTranscript } from "./round.ts";
+import type { ProcurementMechanism } from "./mechanism.ts";
+import type { SettlementTransport } from "./execute.ts";
+export type ReceiptClaim = PaymentReceipt & {
+ transactionHash?: string;
+};
+export declare function auditSettlement(transcript: RoundTranscript, claims: readonly ReceiptClaim[], options?: {
+ mechanism?: ProcurementMechanism;
+ verifier?: Pick<SettlementTransport, "asset" | "inspect">;
+}): Promise<{
+ plan: import("./settlement.ts").SettlementPlan;
+ claimedSummary: {
+ pending: string;
+ confirmed: string;
+ failed: string;
+ paid: boolean;
+ };
+ verifiedSummary: {
+ pending: string;
+ confirmed: string;
+ failed: string;
+ paid: boolean;
+ } | undefined;
+ checks: {
+ paymentId: string;
+ transactionHash: string | undefined;
+ claimed: "failed" | "pending" | "confirmed";
+ observed: "failed" | "pending" | "confirmed" | undefined;
+ matches: boolean | undefined;
+ }[];
+}>;
+ execute import type { Payment, PaymentReceipt, SettlementPlan } from "./settlement.ts";
+export type SignedPayment = {
+ hash: string;
+ bytes: string;
+};
+export type SettlementEntry = {
+ payment: Payment;
+ signed: SignedPayment;
+};
+export type SettlementJournal = {
+ reserve(scope: string, candidate: SettlementEntry): Promise<SettlementEntry>;
+ read(scope: string): Promise<SettlementEntry | undefined>;
+ bindPlan?(scope: string, fingerprint: string): Promise<boolean>;
+};
+export type SettlementTransport = {
+ scope: string;
+ asset: string;
+ prepare(payment: Readonly<Payment>): Promise<SignedPayment>;
+ broadcast(signed: Readonly<SignedPayment>): Promise<void>;
+ inspect(payment: Readonly<Payment>, hash: string): Promise<PaymentReceipt["status"]>;
+};
+export declare function executeSettlement(input: SettlementPlan, options: {
+ transport: SettlementTransport;
+ journal: SettlementJournal;
+ authorize: (payment: Readonly<Payment>) => boolean | Promise<boolean>;
+}): Promise<{
+ receipts: (PaymentReceipt & {
+ transactionHash?: string;
+ broadcastUncertain?: true;
+ })[];
+ summary: {
+ pending: string;
+ confirmed: string;
+ failed: string;
+ paid: boolean;
+ };
+}>;
+ mechanism export type EligibleOffer = Readonly<{
+ sellerId: string;
+ unitPrice: string;
+ capacity: string;
+}>;
+export type FulfillmentLine = {
+ buyerId: string;
+ sellerId: string;
+ quantity: string;
+};
+export type SplitAllocation = {
+ lines: (FulfillmentLine & {
+ unitPrice: string;
+ amount: string;
+ })[];
+ total: string;
+};
+type Buyer = Readonly<{
+ buyerId: string;
+ quantity: string;
+ budget: string;
+}>;
+export type ProcurementMechanism = Readonly<{
+ id: string;
+} & ({
+ selectWinner: (offers: readonly EligibleOffer[]) => string | null;
+} | {
+ allocate: (buyers: readonly Buyer[], offers: readonly EligibleOffer[]) => readonly FulfillmentLine[] | null;
+})>;
+export declare const cheapestCapacity: ProcurementMechanism;
+export declare function validateSplit(buyers: readonly Buyer[], offers: readonly EligibleOffer[], lines: readonly FulfillmentLine[]): SplitAllocation;
+export declare const lowestPrice: ProcurementMechanism;
+export {};
+ near-intents-transport import type { SettlementTransport, SignedPayment } from "./execute.ts";
+import { nearIntentsExecutionCall, signNearIntentsTransfers } from "./near.ts";
+type SigningCallback = Parameters<typeof signNearIntentsTransfers>[1];
+type ExecutionCall = ReturnType<typeof nearIntentsExecutionCall>;
+export declare function nearIntentsTransport(options: {
+ asset: string;
+ relayerId: string;
+ signIntent: SigningCallback;
+ signTransaction: (call: ExecutionCall) => Promise<SignedPayment>;
+ rpcUrl?: string;
+}): SettlementTransport;
+export {};
+ near-testnet import type { SettlementTransport, SignedPayment } from "./execute.ts";
+import type { Payment } from "./settlement.ts";
+export declare const NATIVE_TESTNET_NEAR = "near:testnet:native";
+export declare const nearTransactionHash: RegExp;
+export declare function nearTestnetTransport(sign: (payment: Readonly<Payment>) => Promise<SignedPayment>, rpcUrl?: string): SettlementTransport;
+ near import type { Payment, SettlementPlan } from "./settlement.ts";
+export declare const INTENTS_VERIFIER = "intents.near";
+export declare function planNearSubaccounts(parentId: string, agents: readonly {
+ label: string;
+ publicKey: string;
+ fundingYoctoNear: string;
+}[]): {
+ signerId: string;
+ receiverId: string;
+ actions: readonly [{
+ readonly type: "CreateAccount";
+ }, {
+ readonly type: "Transfer";
+ readonly deposit: string;
+ }, {
+ readonly type: "AddFullAccessKey";
+ readonly publicKey: string;
+ }];
+}[];
+export type NearIntentSigningRequest = Readonly<{
+ payment: Readonly<Payment>;
+ recipient: typeof INTENTS_VERIFIER;
+ message: string;
+ nonce: string;
+}>;
+type IntentSignature = {
+ publicKey: string;
+ signature: string;
+};
+type SignedIntent = {
+ standard: "nep413";
+ payload: Pick<NearIntentSigningRequest, "recipient" | "message" | "nonce">;
+ public_key: string;
+ signature: string;
+};
+export declare function prepareNearIntentsTransfers(plan: SettlementPlan, options: {
+ salt: string;
+ deadline: Date;
+}): NearIntentSigningRequest[];
+export declare function signNearIntentsTransfers(requests: readonly NearIntentSigningRequest[], sign: (request: NearIntentSigningRequest) => Promise<IntentSignature>): Promise<{
+ signed: SignedIntent[];
+}>;
+export declare function nearIntentsExecutionCall(args: Awaited<ReturnType<typeof signNearIntentsTransfers>>): {
+ readonly network: "mainnet";
+ readonly receiverId: "intents.near";
+ readonly methodName: "execute_intents";
+ readonly args: {
+ signed: SignedIntent[];
+ };
+ readonly attachedDepositYoctoNear: "0";
+};
+export declare function readNearIntentsSalt(rpcUrl?: string): Promise<string>;
+export {};
+ replay import type { RoundCommand, RoundTranscript } from "./round.ts";
+import type { ProcurementMechanism } from "./mechanism.ts";
+export declare function resumeRound(transcript: RoundTranscript, clock?: () => number, mechanism?: ProcurementMechanism): Promise<{
+ submitDemand: (buyerId: string, request: import("./types.ts").Demand | null) => boolean;
+ submitCommitment: (sellerId: string, hash: string) => boolean;
+ revealBid: (sellerId: string, bid: import("./types.ts").Bid) => Promise<boolean>;
+ snapshot: () => {
+ splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+ spec: import("./types.ts").RoundSpec;
+ phase: string;
+ buyers: {
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ quantity: string;
+ bids: {
+ sellerId: string;
+ commitment: string;
+ reveal: {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+ } | null;
+ rejection: string | null;
+ }[];
+ allocation: import("./types.ts").Allocation | null;
+ };
+ transcript: () => RoundTranscript;
+}>;
+export declare function replayRound(transcript: RoundTranscript, mechanism?: ProcurementMechanism): Promise<{
+ splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+ spec: import("./types.ts").RoundSpec;
+ phase: string;
+ buyers: {
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ quantity: string;
+ bids: {
+ sellerId: string;
+ commitment: string;
+ reveal: {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+ } | null;
+ rejection: string | null;
+ }[];
+ allocation: import("./types.ts").Allocation | null;
+}>;
+export declare function settlementPlanFromTranscript(transcript: RoundTranscript, mechanism?: ProcurementMechanism): Promise<import("./settlement.ts").SettlementPlan>;
+export type RoundStore = {
+ read(roundId: string): Promise<RoundTranscript | undefined>;
+ compareAndSet(next: RoundTranscript, expectedRevision: number | null): Promise<boolean>;
+};
+export declare function openStoredRound(spec: RoundTranscript["spec"], store: RoundStore, clock?: () => number, mechanism?: ProcurementMechanism): Promise<RoundTranscript>;
+export declare function submitStoredRoundEvent(roundId: string, event: RoundCommand, store: RoundStore, clock?: () => number, mechanism?: ProcurementMechanism): Promise<{
+ readonly status: "rejected";
+ readonly transcript?: undefined;
+} | {
+ readonly status: "conflict";
+ readonly transcript?: undefined;
+} | {
+ readonly status: "accepted";
+ readonly transcript: RoundTranscript;
+}>;
+ round import type { Allocation, Bid, Demand, RoundSpec } from "./types.ts";
+import type { ProcurementMechanism, SplitAllocation } from "./mechanism.ts";
+export type { Allocation, Bid, Demand, RoundSpec } from "./types.ts";
+export type RoundCommand = {
+ type: "demand";
+ buyerId: string;
+ request: Demand | null;
+} | {
+ type: "commitment";
+ sellerId: string;
+ hash: string;
+} | {
+ type: "reveal";
+ sellerId: string;
+ bid: Bid;
+};
+export type RoundEvent = RoundCommand & {
+ at: number;
+};
+export type RoundTranscript = {
+ version: 1;
+ spec: RoundSpec;
+ events: readonly RoundEvent[];
+ observedAt: number;
+};
+export declare function commitBid(roundId: string, sellerId: string, bid: Bid): Promise<string>;
+export declare function createRound(input: RoundSpec, clock?: () => number, mechanism?: ProcurementMechanism): {
+ submitDemand: (buyerId: string, request: Demand | null) => boolean;
+ submitCommitment: (sellerId: string, hash: string) => boolean;
+ revealBid: (sellerId: string, bid: Bid) => Promise<boolean>;
+ snapshot: () => {
+ splitAllocation?: SplitAllocation | null | undefined;
+ spec: RoundSpec;
+ phase: string;
+ buyers: {
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ quantity: string;
+ bids: {
+ sellerId: string;
+ commitment: string;
+ reveal: {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+ } | null;
+ rejection: string | null;
+ }[];
+ allocation: Allocation | null;
+ };
+ transcript: () => RoundTranscript;
+};
+export type RoundSnapshot = ReturnType<ReturnType<typeof createRound>["snapshot"]>;
+ session import type { RoundSnapshot, RoundTranscript } from "./round.ts";
+import type { Bid } from "./types.ts";
+import type { SimulationOptions } from "./simulation.ts";
+/** Private simulation checkpoint. Contains unrevealed offers; never publish it. */
+export type SimulationSession = {
+ version: 1;
+ stage: "ready" | "demand" | "commit" | "reveal" | "closed";
+ randomState: number;
+ transcript: RoundTranscript;
+ sealedOffers: {
+ sellerId: string;
+ bid: Bid;
+ reveal: boolean;
+ }[];
+};
+/** Start an empty simulation. No strategies execute until advanceSimulation is called. */
+export declare function startSimulation(options: Pick<SimulationOptions, "spec" | "seed" | "buyers" | "sellers" | "mechanism">): SimulationSession;
+/** Advance exactly one stage. Persist the returned checkpoint before calling again.
+ * Strategies must be side-effect-free: an uncommitted attempt may be retried.
+ * The supplied callbacks may be asynchronous; clocks are logical simulation time.
+ */
+export declare function advanceSimulation(input: SimulationSession, strategies: Pick<SimulationOptions, "buyers" | "sellers" | "mechanism">): Promise<SimulationSession>;
+/** Explain the recorded outcome without claiming the heuristic proves infeasibility. */
+export declare function explainAllocation(snapshot: RoundSnapshot): {
+ outcome: "allocated" | "no-sale";
+ reason: string;
+ buyers: {
+ spent: string;
+ remainingBudget: string;
+ lines: (import("./mechanism.ts").FulfillmentLine & {
+ unitPrice: string;
+ amount: string;
+ })[];
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ sellers: {
+ sellerId: string;
+ reason: string;
+ quantity: string;
+ }[];
+};
+ settlement import type { RoundSnapshot } from "./round.ts";
+export type Payment = {
+ id: string;
+ buyerId: string;
+ sellerId: string;
+ amount: string;
+};
+export type SettlementPlan = {
+ version: 1 | 2;
+ roundId: string;
+ asset: string;
+ payments: readonly Payment[];
+};
+export declare function paymentIdFor(version: SettlementPlan["version"], roundId: string, buyerId: string, sellerId: string): string;
+export type PaymentReceipt = {
+ paymentId: string;
+ status: "pending" | "confirmed" | "failed";
+};
+export declare function createSettlementPlan(round: RoundSnapshot): SettlementPlan;
+export declare function summarizeSettlement(plan: SettlementPlan, receipts: readonly PaymentReceipt[]): {
+ pending: string;
+ confirmed: string;
+ failed: string;
+ paid: boolean;
+};
+ simulation import type { Bid, Demand, RoundSpec } from "./types.ts";
+import type { Payment, PaymentReceipt } from "./settlement.ts";
+import type { ProcurementMechanism } from "./mechanism.ts";
+type StrategyContext = {
+ resource: Readonly<RoundSpec["resource"]>;
+ asset: string;
+ random: () => number;
+};
+export type BuyerStrategy = {
+ id: string;
+ demand: (context: StrategyContext) => Demand | null | Promise<Demand | null>;
+};
+export type SellerStrategy = {
+ id: string;
+ offer: (context: StrategyContext & {
+ pooledQuantity: string;
+ }) => Omit<Bid, "salt"> | null | Promise<Omit<Bid, "salt"> | null>;
+ reveal?: boolean;
+};
+export type SimulationOptions = {
+ spec: Omit<RoundSpec, "buyers" | "sellers">;
+ seed: number;
+ mechanism?: ProcurementMechanism;
+ buyers: readonly BuyerStrategy[];
+ sellers: readonly SellerStrategy[];
+ paymentOutcome?: (payment: Readonly<Payment>) => PaymentReceipt["status"];
+};
+export declare function simulateProcurement(options: SimulationOptions): Promise<{
+ mode: "simulation";
+ transcript: import("./round.ts").RoundTranscript;
+ stages: readonly [{
+ splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+ spec: RoundSpec;
+ phase: string;
+ buyers: {
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ quantity: string;
+ bids: {
+ sellerId: string;
+ commitment: string;
+ reveal: {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+ } | null;
+ rejection: string | null;
+ }[];
+ allocation: import("./types.ts").Allocation | null;
+ }, {
+ splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+ spec: RoundSpec;
+ phase: string;
+ buyers: {
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ quantity: string;
+ bids: {
+ sellerId: string;
+ commitment: string;
+ reveal: {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+ } | null;
+ rejection: string | null;
+ }[];
+ allocation: import("./types.ts").Allocation | null;
+ }, {
+ splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+ spec: RoundSpec;
+ phase: string;
+ buyers: {
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ quantity: string;
+ bids: {
+ sellerId: string;
+ commitment: string;
+ reveal: {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+ } | null;
+ rejection: string | null;
+ }[];
+ allocation: import("./types.ts").Allocation | null;
+ }, {
+ splitAllocation?: import("./mechanism.ts").SplitAllocation | null | undefined;
+ spec: RoundSpec;
+ phase: string;
+ buyers: {
+ quantity: string;
+ budget: string;
+ buyerId: string;
+ }[];
+ quantity: string;
+ bids: {
+ sellerId: string;
+ commitment: string;
+ reveal: {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+ } | null;
+ rejection: string | null;
+ }[];
+ allocation: import("./types.ts").Allocation | null;
+ }];
+ plan: import("./settlement.ts").SettlementPlan;
+ settlement: {
+ pending: string;
+ confirmed: string;
+ failed: string;
+ paid: boolean;
+ };
+ payments: {
+ buyerId: string;
+ amount: string;
+ status: "failed" | "pending" | "simulated";
+ }[];
+}>;
+export {};
+ spending-policy import type { Payment, SettlementPlan } from "./settlement.ts";
+import { executeSettlement } from "./execute.ts";
+export type SpendingPolicy = {
+ roundId: string;
+ buyerId: string;
+ asset: string;
+ transportScope: string;
+ sellers: readonly string[];
+ maxAmount: string;
+ expiresAt: number;
+};
+export declare function spendingPolicyMessage(policy: SpendingPolicy): Uint8Array<ArrayBuffer>;
+export declare function authorizeWithSpendingPolicies(input: SettlementPlan, transportScope: string, approvals: readonly {
+ policy: SpendingPolicy;
+ signature: Uint8Array;
+}[], resolveBuyerKey: (buyerId: string) => Promise<Parameters<typeof globalThis.crypto.subtle.verify>[1] | undefined>, clock?: () => number): Promise<(payment: Readonly<Payment>) => boolean>;
+export declare function executeWithSpendingPolicies(input: SettlementPlan, options: Omit<Parameters<typeof executeSettlement>[1], "authorize"> & {
+ approvals: Parameters<typeof authorizeWithSpendingPolicies>[2];
+ resolveBuyerKey: Parameters<typeof authorizeWithSpendingPolicies>[3];
+ clock?: () => number;
+}): Promise<{
+ receipts: (import("./settlement.ts").PaymentReceipt & {
+ transactionHash?: string;
+ broadcastUncertain?: true;
+ })[];
+ summary: {
+ pending: string;
+ confirmed: string;
+ failed: string;
+ paid: boolean;
+ };
+}>;
+ types export type RoundSpec = {
+ id: string;
+ resource: {
+ label: string;
+ unit: string;
+ deliveryWindow: string;
+ };
+ asset: string;
+ mechanismId?: string;
+ buyers: readonly string[];
+ sellers: readonly string[];
+ demandCloses: number;
+ commitCloses: number;
+ revealCloses: number;
+};
+export type Demand = {
+ quantity: string;
+ budget: string;
+};
+export type Bid = {
+ capacity: string;
+ unitPrice: string;
+ salt: string;
+};
+export type Allocation = {
+ sellerId: string;
+ unitPrice: string;
+ total: string;
+ shares: {
+ buyerId: string;
+ quantity: string;
+ amount: string;
+ }[];
+};
+ 
+
+# Connect an independent agent
+https://mikemoulder.github.io/swarmkit-site/agents/
+Build a participant that can submit commands without impersonating another buyer or seller.
+
+ Choose the integration boundary For simulation, implement BuyerStrategy.demand and SellerStrategy.offer. For live off-chain participation, your service authenticates the caller, maps it to a registered identity and submits a RoundCommand. Do not accept buyerId or sellerId as proof of identity. 
+ const buyer = {
+ id: "research-agent",
+ async demand() {
+ const quantity = Math.min(workQueue.length, Math.floor(balance / unitCap));
+ return quantity ? { quantity: String(quantity), budget: String(quantity * unitCap) } : null;
+ },
+}; Here workQueue, balance and unitCap are application state. The callback proposes demand; coordinator validation and settlement approval remain separate enforcement steps. 
+ A complete service recipe agent-service.mjs exposes POST /command, derives the actor from a bearer credential, checks its buyer/seller role, limits request size, and delegates phase and commitment validation to submitStoredRoundEvent. Combine it with the SQLite store . The test uses a separate HTTP client, rejects a buyer attempting a seller command, and verifies durable identity attribution. 
+ const store = sqliteRoundStore("./rounds.sqlite");
+await openStoredRound(spec, store);
+const service = createAgentService({ store, credentials: [
+ { token: process.env.BUYER_TOKEN, id: "buyer.example.testnet", role: "buyer" },
+ { token: process.env.SELLER_TOKEN, id: "seller.example.testnet", role: "seller" },
+] });
+service.listen(4100, "127.0.0.1"); Import the two example factories from the files you downloaded; openStoredRound comes from near-swarmkit. Validate your token configuration before starting. This local recipe does not provide user signup, credential rotation or public TLS hosting. 
+ Submit demand POST /command
+Authorization: Bearer <buyer-token>
+Content-Type: application/json
+
+{"roundId":"round-01","type":"demand","request":{"quantity":"3","budget":"15"}} 
+ Commit, then reveal The seller generates a fresh 32-byte cryptographic salt, keeps the bid private, computes commitBid(roundId, sellerId, bid), and submits a commitment command during the commit window. During the reveal window it submits the original bid. Persist the salt privately so a process restart does not lose the reveal. An unrevealed bid cannot receive an allocation. 
+ Handle responses deliberately Status Agent action 200 Command accepted. Keep the returned snapshot. 401 / 403 Fix authentication or role. Do not retry under an invented identity. 409 Re-read current state and reconsider the command before retrying. 422 Inspect deadline, roster and bid validity. Do not automatically raise a buyer cap. 
+ Separate spending permission An accepted demand is not a signature authorizing a transfer. Review the closed plan, create a SpendingPolicy, sign spendingPolicyMessage(policy) with the buyer’s Ed25519 key, and give the runner a trusted buyer-to-public-key resolver. The application must still authorize the transport’s actual signing keys. 
+ Instructions for coding agents Full machine-readable documentation includes the public contracts and guides. Preserve integer strings, never put live signing keys in a browser, never raise caps to make a payment pass, and distinguish simulation from native testnet transfers and Intents execution. 
+
+# Understand the coordination model
+https://mikemoulder.github.io/swarmkit-site/concepts/
+Learn the objects, trust boundaries and guarantees before connecting real agents.
+
+ One round, one resource, one asset A round freezes a participant roster, a resource description, a payment asset and three deadlines. Quantities and amounts are canonical integer strings. Arithmetic uses bigint. A resource label can describe GPU hours, inference credits or dataset seats; it does not implement resource delivery. 
+ Object Contract Demand A positive quantity and a total spend cap. The buyer may replace or withdraw it before demand closes. Bid A positive capacity, unit price and 32-byte salt. The commitment binds these to the round and seller. Allocation Complete buyer fulfillment within budgets and seller capacity. Split lines identify both buyer and seller. Transcript Versioned accepted commands and observation time. Replay recomputes the outcome. Settlement plan Exact amounts and stable payment IDs derived from the closed allocation. 
+ Time is part of the protocol The live coordinator defaults to Date.now(), in Unix milliseconds. Windows are half-open: demand is accepted before demandCloses, commitments from demandCloses up to commitCloses, and reveals from commitCloses up to revealCloses. At a closing timestamp, a submission is late. The clock must never move backwards. Simulations supply logical timestamps instead. 
+ What SwarmKit enforces The SDK checks participant membership, phases, immutable commitments, reveal hashes, allocation totals, capacity and budgets. Its runner enforces supplied approvals and binds split payment plans to a journal. Applications authenticate identities, protect keys, persist state atomically and pin custom mechanism implementations. 
+ What replay proves A transcript can be internally consistent while omitting a submission. Replay checks the recorded inputs; it does not establish their completeness or origin. Store the transcript in a trusted service or add an external attestation layer if your application needs stronger provenance. 
+ Current boundaries SwarmKit currently implements procurement. It does not supply escrow, atomic all-buyer settlement, refunds, delivery verification, arbitrary negotiations, compatibility matching or a production identity provider. Python bindings and additional economic protocols remain future work. The deliveryWindow field is descriptive, not an enforced fulfillment deadline. 
+
+# Choose and extend allocation rules
+https://mikemoulder.github.io/swarmkit-site/mechanisms/
+Use single-seller procurement or split fulfillment, and understand exactly what can be customized.
+
+ Lowest-price procurement The default lowest-price-v1 rule selects one seller. Before selection, the SDK rejects offers that cannot fill the complete pool or exceed any buyer’s total cap. The cheapest eligible unit price wins; ASCII seller ID breaks ties. Charges use the selected seller’s quoted price. 
+ Split fulfillment import { cheapestCapacity, createRound } from "near-swarmkit";
+const round = createRound({ ...spec, mechanismId: cheapestCapacity.id }); cheapest-capacity-v1 orders buyers by budget per unit, tightest first, then draws inventory from sellers in ascending price order. The result must fill all admitted demand. A null result is no sale. This is a greedy heuristic; failure does not prove that no feasible allocation exists. 
+ A custom winner rule const mostCapacity = {
+ id: "capacity-first-v1",
+ selectWinner(offers) {
+ return [...offers].sort((a, b) => {
+ const delta = BigInt(b.capacity) - BigInt(a.capacity);
+ return delta < 0n ? -1 : delta > 0n ? 1
+ : a.sellerId < b.sellerId ? -1 : a.sellerId > b.sellerId ? 1 : 0;
+ })[0]?.sellerId ?? null;
+ },
+};
+const round = createRound({ ...spec, mechanismId: mostCapacity.id }, Date.now, mostCapacity); 
+ A custom split rule Implement allocate(buyers, offers) instead of selectWinner. Return null or an array of { buyerId, sellerId, quantity }. Each buyer–seller pair must be unique. The SDK computes amounts at the revealed bid prices, verifies every buyer is filled exactly, and rejects over-budget or over-capacity results. It does not accept custom payment prices through this interface. 
+ Keep replay deterministic Give each implementation a versioned ID and supply the same implementation to createRound, replayRound, resumeRound, settlementPlanFromTranscript and auditSettlement. Never silently change an implementation behind an old ID. Avoid wall clocks, random tie-breaking or network calls inside allocation functions. 
+ Inspect the decision const decision = explainAllocation(round.snapshot());
+console.log(decision.reason);
+console.table(decision.buyers); // spend, unused budget, fulfillment lines
+console.table(decision.sellers); // allocation or rejection reason Call this only on a closed round. “Not selected by mechanism” does not imply a bid was invalid. The explanation reports the recorded outcome without pretending to expose the internal reasoning of arbitrary custom plugins. 
+
+# Run and resume agent simulations
+https://mikemoulder.github.io/swarmkit-site/simulation/
+Execute policies one stage at a time and keep a private checkpoint across restarts.
+
+ Two execution styles simulateProcurement runs a complete deterministic round and returns its stage snapshots, transcript, payment plan and synthetic receipts. Use it for unit tests and experiments. startSimulation creates an empty checkpoint; advanceSimulation executes exactly one stage. Use the incremental API for a scheduler or interactive reference application. 
+ import { startSimulation, advanceSimulation, replayRound } from "near-swarmkit";
+let checkpoint = startSimulation(options); // no callbacks invoked
+checkpoint = await advanceSimulation(checkpoint, options); // buyer demands
+checkpoint = await advanceSimulation(checkpoint, options); // seller commitments
+// Persist checkpoint atomically before progressing.
+checkpoint = await advanceSimulation(checkpoint, options); // reveals
+checkpoint = await advanceSimulation(checkpoint, options); // closed allocation
+const publicSnapshot = await replayRound(checkpoint.transcript); 
+ Asynchronous policies Buyer demand and seller offer callbacks may return promises. A seller sees the pooled quantity; both receive the resource, asset and seeded random function. Policies may close over application history, balances or inventory. Keep them free of external side effects: if a host crashes before committing the returned checkpoint, a callback can run again. Hosts should impose timeouts and cancellation around external computations. 
+ Private checkpoints, public transcripts A SimulationSession includes unrevealed seller offers. It is trusted private state, not an interchange format to accept from strangers. Publish only its transcript or replayed snapshot. The built-in simulation salts are deterministic and must not be used for live hidden bids. 
+ A working economy The Market reference applies the SDK to 20 GPU buyers and five sellers, or a smaller inference market. It maintains inventory, work consumption, earned income, replenishment costs and utilization-based seller quotes. The same controller runs against IndexedDB in the browser and SQLite in the local service. The tests kill a process after recording a simulated broadcast and recover it in a new process. 
+ git clone https://github.com/mikemoulder/swarmkit-market
+cd swarmkit-market
+npm ci
+npm test
+npm run experiment -- 12
+npm run build
+npm run serve All these economy runs are simulation. Synthetic receipts and synthetic buyer approvals cannot move real funds. The experiment retains its SQLite database across invocations; use a new database path as the second argument for an independent run. 
+ Runnable example Download incremental-market.mjs . Run it from a project with near-swarmkit installed. It demonstrates serialization and async policies; the reference application supplies actual durable storage. 
+
+# Persist rounds and payment journals
+https://mikemoulder.github.io/swarmkit-site/storage/
+Choose atomic storage semantics that survive concurrent writers and process restarts.
+
+ RoundStore type RoundStore = {
+ read(roundId: string): Promise<RoundTranscript | undefined>;
+ compareAndSet(next: RoundTranscript, expectedRevision: number | null): Promise<boolean>;
+}; The revision is the number of accepted events. null means “insert only if absent.” A non-null revision means “update only if the stored event count still matches.” Do not implement this as a separate read followed by an unconditional write. 
+ const store = sqliteRoundStore("./rounds.sqlite");
+await openStoredRound(spec, store);
+const result = await submitStoredRoundEvent(spec.id, {
+ type: "demand", buyerId: authenticatedBuyerId,
+ request: { quantity: "2", budget: "10" },
+}, store);
+if (result.status === "conflict") {
+ // Read the current round, recheck its phase, then decide whether to retry.
+} The complete SQLite adapter uses an atomic conditional UPDATE, WAL and FULL synchronization. Node 22.18’s built-in SQLite API is experimental. Applications may implement the same interface with another database. 
+ SettlementJournal read retrieves a payment entry. reserve atomically inserts a candidate if absent and returns the existing winner otherwise. The entry contains the payment and signed bytes/hash. bindPlan atomically stores or matches the complete plan fingerprint. Split settlement requires bindPlan; its absence is an error. 
+ const journal = {
+ read: async scope => loadEntry(scope),
+ reserve: async (scope, candidate) => insertOrReadAtomically(scope, candidate),
+ bindPlan: async (scope, fingerprint) => insertOrCompareAtomically(scope, fingerprint),
+}; The snippet states the required adapter contract; loadEntry and the two atomic functions are your database operations, not SDK exports. The reference market contains implemented IndexedDB and SQLite stores and a durable simulation journal. Its Intents CLI contains a separate file journal for live execution. 
+ Order of durability Freeze the allocation and bind the payment plan. Authorize, prepare the transaction and durably reserve its signed bytes. Inspect the stored hash, then broadcast only those bytes if allowed. Record finalized receipts and apply application ledger changes once per payment ID. A transport exception must not cause you to discard the journal and prepare a replacement. A pending transaction can already have been broadcast. Reconcile it first. Independent payments can settle partially. 
+ Storage ownership Keep one trusted storage namespace per environment. Protect journals like credentials: their signed bytes may still be broadcastable. Browser simulation storage is suitable for synthetic activity, not for custody of live keys. Use unique round IDs and retain the journal for recovery. 
+
+# Authorize and recover NEAR settlement
+https://mikemoulder.github.io/swarmkit-site/settlement/
+Carry an allocation into payments with explicit approval, durable identity and independent receipt checks.
+
+ Prepare from the recorded round const plan = await settlementPlanFromTranscript(transcript, customMechanism);
+const result = await executeWithSpendingPolicies(plan, {
+ transport, journal, approvals, resolveBuyerKey,
+});
+console.log(result.summary); // confirmed, pending, failed, paid Omit customMechanism for a built-in rule. Every payment carries a canonical integer amount. Version 1 IDs bind round and buyer; version 2 binds round, buyer and seller. Split plans must be atomically bound before execution. 
+ Buyer-signed spending policy const policy = {
+ roundId: plan.roundId,
+ buyerId: "buyer.example.testnet",
+ asset: plan.asset,
+ transportScope: transport.scope,
+ sellers: ["seller.example.testnet"],
+ maxAmount: "1000000000000000000000",
+ expiresAt: Date.now() + 300_000,
+};
+const bytes = spendingPolicyMessage(policy);
+// Sign bytes with the trusted buyer Ed25519 approval key.
+// Pass { policy, signature: Uint8Array } in approvals. The signature binds round, buyer, asset, transport, seller allowlist, cumulative cap and expiry. The runner checks approval before preparation and again before broadcasting. Trust the resolver, not a public key supplied by an agent request. These are application-enforced policies, not NEAR restricted access keys or an on-chain spending contract. 
+ Native testnet NEAR nearTestnetTransport accepts your exact-payment signer. The signer constructs one native transfer from buyer to seller. The transport checks finalized sender, recipient, amount and action before confirming. Use the native testnet asset constant and named testnet accounts. The packaged SDK’s main runtime has zero dependencies; the separate live example uses near-api-js. 
+ Run the reference testnet validation From the swarmkit-market repository, install dependencies and run: npm run testnet -- --faucet-testnet --gpu
+npm run testnet -- --faucet-testnet --split
+npm run testnet:audit -- .market/testnet/<printed-account>/evidence.json The first run provisions 20 buyers and five sellers; the second allocates one buyer across two sellers. Both use disposable faucet accounts, incremental SDK stages and actual native testnet transfers. The runner interrupts after journaling the first signed transaction, resumes, and audits each finalized sender, recipient and amount. Evidence and signed journals remain under ignored .market/testnet; only public evidence should be shared. Keys are memory-only: this bounded validation tool is not a persistent wallet service. No mainnet tokens are needed. The 14 November validation finalized all 20 GPU payments (0.036 testnet NEAR) and both split payments (0.0014 testnet NEAR). These validate coordination-to-native-payment integration, not resource delivery or Intents. The browser credit economy remains separate. NEAR Intents nearIntentsTransport operates on supported NEP-141 balances held in the mainnet Verifier. Buyers need funded Verifier balances and recognized signing keys. A buyer callback signs the exact NEP-413 message; a relayer callback signs the execute_intents transaction. The adapter simulates each transfer before requesting the relayer signature, then checks finalized execution against the approved payment. 
+ const transport = nearIntentsTransport({
+ asset: "nep141:wrap.near",
+ relayerId: "your-relayer.near",
+ signIntent: buyerNep413Signer,
+ signTransaction: relayerTransactionSigner,
+}); The callbacks above are application implementations. The operator CLI provides an implementation using near-api-js. A recipient receives a Verifier balance; withdrawing it is a separate operation. This adapter does not offer cross-chain routing or solver optimization. 
+ Recovery states Observation Behavior No journal entry Check authorization before preparing. Pending recorded hash Inspect it; rebroadcast only the same stored bytes if still authorized. Final confirmed payment Reconcile it; do not sign again. Final failed payment Report failure. Replacement is a separate explicit workflow. Expired / ambiguous transaction Retain the journal and reconcile. The runner does not automatically replace it. 
+ Independent audit const report = await auditSettlement(transcript, receipts, {
+ verifier: transport,
+});
+console.log(report.claimedSummary, report.verifiedSummary);
+console.table(report.checks); Without a verifier, the report checks recorded claims only. With one, it compares observed status and rejects reused transaction hashes. Independent transfers can settle partially; SwarmKit does not reverse a confirmed payment or guarantee resource delivery. 
+
+# Architecture and market rules
+https://mikemoulder.github.io/swarmkit-site/architecture/
+See what the SDK owns, what the reference application owns and where NEAR executes.
+
+ Three repositories, one SDK boundary swarmkit-site swarmkit-market
+documentation UI / policies / economy controller
+ | |
+ +---- near-swarmkit -----+
+ rounds / mechanisms / replay
+ approvals / settlement runner / audit
+ |
+ application-provided adapters
+ storage / participant auth / signing
+ |
+ NEAR testnet or Intents Verifier 
+ SDK responsibilities src/swarm holds the round engine, mechanisms, replay/storage contracts, simulation APIs, spending policies, settlement runner and NEAR adapters. It does not hold application credentials, request handlers or resource delivery logic. Its standalone package excludes the root Next.js dashboard dependencies. 
+ Reference economy responsibilities The market’s economy controller defines work demand, capacity consumption, seller quote policies, replenishment, money flows and event history. Its browser host uses IndexedDB with Web Locks; its local HTTP host uses SQLite, an operator token and conditional revision updates. Both consume the packaged SDK. The local host is a simulation coordinator, not a public production custody service. 
+ Economic rules Collect replaceable buyer demand before demand closes. Bind each seller’s immutable offer with a SHA-256 commitment. Verify reveals against that commitment during the reveal window. Fill the complete pool within every buyer cap and every seller capacity, or make no allocation. Charge the quoted unit price for each allocated line. Settle independent buyer–seller payments. Preserve partial outcomes and reconcile uncertain transactions. Single-seller procurement and split procurement use different clearing rules; see Mechanisms . The GPU market remains the original reference; inference and dataset examples exercise reuse. 
+ On-chain boundary Auction inputs, clearing and resource delivery remain off-chain. Native testnet evidence proves the recorded transfers. Intents execution moves balances in the Verifier. Neither proves delivery of the purchased resource. No SwarmKit escrow contract is deployed. 
+ Releases and compatibility The package remains an unpublished 0.1.0 release candidate. Build and install the tarball from source. Transcript version 1, settlement plan versions 1 and 2, and simulation checkpoint version 1 are distinct formats. Do not rewrite saved payment identities or silently swap mechanism versions. The old root dashboard remains a minimal SDK example; the standalone Market is the primary reference application. 
+
+# Diagnose failures without losing state
+https://mikemoulder.github.io/swarmkit-site/errors/
+Use the failure boundary to decide whether to retry, reconcile or correct configuration.
+
+ Round commands Direct coordinator methods return false for rejected submissions. The stored coordinator returns accepted, rejected or conflict. Invalid configuration, backwards clocks, invalid replay and invalid plugin outputs throw errors. There is no stable exported error-code enum yet; do not build critical recovery logic around matching message strings. 
+ Allocation A no-sale result is a valid economic outcome. Inspect missing reveals, capacity, buyer caps and the selected mechanism. The split heuristic can return null without proving infeasibility. Never increase buyer authorization simply to force a sale. 
+ Storage conflict Re-read the latest state, revalidate the phase and reconstruct the intended command. Do not retry an unconditional write. A failed persistence operation must prevent progress to the next execution step. 
+ Settlement uncertainty Keep the same journal, transport scope, round ID and relayer. A broadcast exception can mean the request succeeded but the response was lost. Reconcile the saved transaction hash. A mismatch between a finalized transfer and the approved payment is an error requiring investigation, not a retry signal. 
+ RPC failures The testnet adapter bounds HTTP 429 retries. The Intents adapter currently has request timeouts but no automatic HTTP 429 retry loop. Hosts should surface RPC errors and schedule bounded reconciliation attempts. Signer callback correctness and durable storage remain application responsibilities. 
+ Browser storage The Market requires IndexedDB and Web Locks on HTTPS or localhost. If storage is unavailable, it displays an error instead of silently using volatile memory. Clearing site data removes the local simulation. Exported public records contain transcripts and receipt claims, not the private checkpoint needed to resume sealed offers. 

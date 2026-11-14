@@ -3,49 +3,51 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Build a procurement agent | SwarmKit</title>
-  <meta name="description" content="Give each agent a bounded role, then let the coordinator and settlement policy enforce the market rules.">
-  <meta name="theme-color" content="#0a0d14">
+  <title>Connect an independent agent | SwarmKit</title>
+  <meta name="description" content="Build a participant that can submit commands without impersonating another buyer or seller.">
+  <meta name="theme-color" content="#191b19">
   <meta name="page-type" content="software">
   <meta name="site-kind" content="software">
   <link rel="icon" href="../icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/system.css">
-  <link rel="stylesheet" href="../site.css">
+  <link rel="stylesheet" href="../site.css?v=20261114-3">
 </head>
 <body class="docs-body">
   <header class="site-header"><div class="wrap topbar">
     <a class="skip-link" href="#main">Skip to content</a>
-    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">✳</span> SwarmKit</a>
+    <a class="brand" href="../">SwarmKit<span class="brand-dot">.</span></a>
     <nav aria-label="Main"><a href="../docs/">Docs</a><a href="../agents/">Agent guide</a><a href="https://github.com/mikemoulder/swarmkit">GitHub ↗</a></nav>
   </div></header>
   <main id="main" class="wrap docs-layout">
-    <nav class="docs-nav" aria-label="Documentation"><a href="../docs/">Quickstart</a><a href="../reference/">SDK reference</a><a href="../agents/" aria-current="page">Agent guide</a></nav>
-    <article class="docs-content"><h1>Build a procurement agent</h1><p>Give each agent a bounded role, then let the coordinator and settlement policy enforce the market rules.</p>
-    <h2>Give the agent one role</h2>
-    <p>A buyer strategy turns application demand into a quantity and a budget. A seller strategy quotes a price and available capacity. The coordinator owns deadlines and clearing.</p>
-    <pre><code>const buyer = {
+    <nav class="docs-nav" aria-label="Documentation"><button class="doc-menu" aria-expanded="false" aria-controls="nav-groups">Browse documentation +</button><label class="doc-search-label">Find a guide<input type="search" id="doc-search" placeholder="Search documentation" autocomplete="off"></label><div id="search-results" aria-live="polite"></div><div class="nav-groups" id="nav-groups"><h2>Start here</h2><a href="../docs/">Quickstart</a><a href="../concepts/">Coordination model</a><h2>Build a market</h2><a href="../mechanisms/">Allocation rules</a><a href="../simulation/">Simulation & strategies</a><a href="../storage/">State & recovery</a><a href="../settlement/">NEAR settlement</a><h2>Reference</h2><a href="../reference/">SDK API</a><a href="../architecture/">Architecture</a><a href="../errors/">Errors & troubleshooting</a><h2>For agents</h2><a href="../agents/" aria-current="page">Agent integration</a></div></nav>
+    <article class="docs-content"><div class="doc-breadcrumb">Documentation / agents</div><h1>Connect an independent agent</h1><p>Build a participant that can submit commands without impersonating another buyer or seller.</p><div class="page-actions"><button id="copy-page">Copy page text</button><a href="../llms-full.txt">Full text for agents ↗</a></div>
+<h2 id="choose-the-integration-boundary">Choose the integration boundary</h2><p>For simulation, implement BuyerStrategy.demand and SellerStrategy.offer. For live off-chain participation, your service authenticates the caller, maps it to a registered identity and submits a RoundCommand. Do not accept buyerId or sellerId as proof of identity.</p>
+<pre><code>const buyer = {
   id: "research-agent",
-  demand: () =&gt; ({ quantity: "3", budget: "15" }),
-};
+  async demand() {
+    const quantity = Math.min(workQueue.length, Math.floor(balance / unitCap));
+    return quantity ? { quantity: String(quantity), budget: String(quantity * unitCap) } : null;
+  },
+};</code></pre><p>Here workQueue, balance and unitCap are application state. The callback proposes demand; coordinator validation and settlement approval remain separate enforcement steps.</p>
+<h2 id="a-complete-service-recipe">A complete service recipe</h2><p><a href="../examples/agent-service.mjs">agent-service.mjs</a> exposes POST /command, derives the actor from a bearer credential, checks its buyer/seller role, limits request size, and delegates phase and commitment validation to submitStoredRoundEvent. Combine it with the <a href="../examples/sqlite-round-store.mjs">SQLite store</a>. The test uses a separate HTTP client, rejects a buyer attempting a seller command, and verifies durable identity attribution.</p>
+<pre><code>const store = sqliteRoundStore("./rounds.sqlite");
+await openStoredRound(spec, store);
+const service = createAgentService({ store, credentials: [
+  { token: process.env.BUYER_TOKEN, id: "buyer.example.testnet", role: "buyer" },
+  { token: process.env.SELLER_TOKEN, id: "seller.example.testnet", role: "seller" },
+] });
+service.listen(4100, "127.0.0.1");</code></pre><p>Import the two example factories from the files you downloaded; openStoredRound comes from near-swarmkit. Validate your token configuration before starting. This local recipe does not provide user signup, credential rotation or public TLS hosting.</p>
+<h2 id="submit-demand">Submit demand</h2><pre><code>POST /command
+Authorization: Bearer &lt;buyer-token&gt;
+Content-Type: application/json
 
-const seller = {
-  id: "inference-seller",
-  offer: () =&gt; ({ capacity: "5", unitPrice: "4" }),
-};</code></pre>
-    <p>Pass these strategies to <code>simulateProcurement</code>. For live participation, authenticate the caller before mapping its identity to a <code>RoundCommand</code>.</p>
-    <h2>Keep approvals with the buyer</h2>
-    <ol>
-      <li>Derive and review a closed settlement plan. Resolve the buyer’s trusted public key outside the agent’s input.</li>
-      <li>Set the round, asset, transport scope, seller allowlist, cumulative maximum and expiry in <code>SpendingPolicy</code>.</li>
-      <li>Sign <code>spendingPolicyMessage(policy)</code> with the buyer’s Ed25519 approval key.</li>
-      <li>Use <code>executeWithSpendingPolicies</code> with the same journal across attempts. Implement atomic <code>bindPlan</code> for split fulfillment.</li>
-      <li>Inspect the existing hash after an ambiguous send. Authorize a replacement only after reconciling the original transaction.</li>
-    </ol>
-    <h2>Connect NEAR Intents</h2>
-    <p>The buyer must hold a supported asset in the Verifier and have a recognized signing key. Supply a NEP-413 callback for the exact request and a separate relayer callback for the resulting Verifier call. Configure the transport for the asset in the plan.</p>
-    <p>Test agent behavior with deterministic strategies first. Keep signing and RPC access on your backend. A read-only receipt view can remain public.</p>
-    <p><a href="../llms.txt">Read the plain-text guide</a></p></article>
+{"roundId":"round-01","type":"demand","request":{"quantity":"3","budget":"15"}}</code></pre>
+<h2 id="commit-then-reveal">Commit, then reveal</h2><p>The seller generates a fresh 32-byte cryptographic salt, keeps the bid private, computes commitBid(roundId, sellerId, bid), and submits a commitment command during the commit window. During the reveal window it submits the original bid. Persist the salt privately so a process restart does not lose the reveal. An unrevealed bid cannot receive an allocation.</p>
+<h2 id="handle-responses-deliberately">Handle responses deliberately</h2><table class="doc-table"><thead><tr><th>Status</th><th>Agent action</th></tr></thead><tbody><tr><td>200</td><td>Command accepted. Keep the returned snapshot.</td></tr><tr><td>401 / 403</td><td>Fix authentication or role. Do not retry under an invented identity.</td></tr><tr><td>409</td><td>Re-read current state and reconsider the command before retrying.</td></tr><tr><td>422</td><td>Inspect deadline, roster and bid validity. Do not automatically raise a buyer cap.</td></tr></tbody></table>
+<h2 id="separate-spending-permission">Separate spending permission</h2><p>An accepted demand is not a signature authorizing a transfer. Review the closed plan, create a SpendingPolicy, sign spendingPolicyMessage(policy) with the buyer’s Ed25519 key, and give the runner a trusted buyer-to-public-key resolver. The application must still authorize the transport’s actual signing keys.</p>
+<h2 id="instructions-for-coding-agents">Instructions for coding agents</h2><p><a href="../llms-full.txt">Full machine-readable documentation</a> includes the public contracts and guides. Preserve integer strings, never put live signing keys in a browser, never raise caps to make a payment pass, and distinguish simulation from native testnet transfers and Intents execution.</p><nav class="page-next" aria-label="Next page"><span>Continue reading</span><a href="../concepts/">Understand the coordination model ↗</a></nav></article>
+    <aside class="docs-toc" aria-label="On this page"><h2>On this page</h2><a href="#choose-the-integration-boundary">Choose the integration boundary</a><a href="#a-complete-service-recipe">A complete service recipe</a><a href="#submit-demand">Submit demand</a><a href="#commit-then-reveal">Commit, then reveal</a><a href="#handle-responses-deliberately">Handle responses deliberately</a><a href="#separate-spending-permission">Separate spending permission</a><a href="#instructions-for-coding-agents">Instructions for coding agents</a></aside>
   </main>
   <footer class="site-footer"><div class="wrap"><a class="brand" href="../">SwarmKit</a><nav aria-label="Footer"><a href="../llms.txt">llms.txt</a><a href="https://mikemoulder.github.io/swarmkit-market/">Market ↗</a></nav></div></footer>
-</body>
+<script src="../docs.js" defer></script></body>
 </html>
